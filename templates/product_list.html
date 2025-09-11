@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}Boutique - Franck'K Shoes CM{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar avec filtres -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Catégories</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="{% url 'product_list' %}" class="text-decoration-none {% if not selected_category %}fw-bold text-primary{% endif %}">
+                                Toutes les catégories
+                            </a>
+                        </li>
+                        {% for category in categories %}
+                        <li class="list-group-item">
+                            <a href="{% url 'product_list' %}?category={{ category.id }}" class="text-decoration-none {% if selected_category == category.id|stringformat:'s' %}fw-bold text-primary{% endif %}">
+                                {{ category.name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recherche avancée</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'search' %}">
+                        <div class="mb-3">
+                            <label for="searchQuery" class="form-label">Mot-clé</label>
+                            <input type="text" class="form-control" id="searchQuery" name="q" value="{{ search_query }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="minPrice" class="form-label">Prix min</label>
+                            <input type="number" class="form-control" id="minPrice" name="min_price" placeholder="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxPrice" class="form-label">Prix max</label>
+                            <input type="number" class="form-control" id="maxPrice" name="max_price" placeholder="100000">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Liste des produits -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Notre collection</h2>
+                <div>
+                    <span class="text-muted">{{ page_obj.paginator.count }} produit(s) trouvé(s)</span>
+                </div>
+            </div>
+            
+            <!-- Barre de recherche -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" action="{% url 'product_list' %}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Rechercher un produit..." name="q" value="{{ search_query }}">
+                            {% if selected_category %}
+                            <input type="hidden" name="category" value="{{ selected_category }}">
+                            {% endif %}
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Produits -->
+            {% if page_obj %}
+            <div class="row">
+                {% for shoe in page_obj %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ shoe.image.url }}" class="card-img-top" alt="{{ shoe.name }}" style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ shoe.name }}</h5>
+                            <p class="card-text text-muted">{{ shoe.category.name }}</p>
+                            <p class="card-text text-primary fw-bold">{{ shoe.price }} FCFA</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'product_detail' shoe.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
+                                <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4>Aucun produit trouvé</h4>
+                <p class="text-muted">Essayez de modifier vos critères de recherche.</p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary">Voir tous les produits</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de l'ajout au panier
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const shoeId = this.getAttribute('data-shoe-id');
+            // Pour la liste des produits, on utilise des valeurs par défaut
+            addToCart(shoeId, 38, 'Noir', 1);
+        });
+    });
+    
+    function addToCart(shoeId, size, color, quantity) {
+        fetch(`/panier/ajouter/${shoeId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                size: size,
+                color: color,
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mettre à jour le compteur du panier
+                document.querySelectorAll('.cart-count').forEach(span => {
+                    span.textContent = data.cart_count;
+                });
+                
+                // Afficher une notification
+                showAlert('Produit ajouté au panier!', 'success');
+            }
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        // Supprimer l'alerte après 3 secondes
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}

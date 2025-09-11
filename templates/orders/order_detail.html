@@ -1,0 +1,156 @@
+16. orders/order_detail.html
+{% extends 'base.html' %}
+
+{% block title %}Commande #{{ order.id }} - Franck'K Shoes CM{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'profile' %}">Mon compte</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Commande #{{ order.id }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Détails de la commande #{{ order.id }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Pointure</th>
+                                    <th>Couleur</th>
+                                    <th>Quantité</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.orderitem_set.all %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ item.shoe.image.url }}" alt="{{ item.shoe.name }}" class="img-thumbnail me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                            <div>{{ item.shoe.name }}</div>
+                                        </div>
+                                    </td>
+                                    <td>{{ item.size }}</td>
+                                    <td>{{ item.color }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.price }} FCFA</td>
+                                    <td>{{ item.get_total }} FCFA</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-end"><strong>Sous-total:</strong></td>
+                                    <td><strong>{{ order.total_amount }} FCFA</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-end"><strong>Livraison:</strong></td>
+                                    <td>
+                                        <strong>
+                                            {% if order.total_amount >= 50000 %}
+                                            Gratuite
+                                            {% else %}
+                                            5 000 FCFA
+                                            {% endif %}
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-end"><strong>Total:</strong></td>
+                                    <td>
+                                        <strong>
+                                            {% if order.total_amount >= 50000 %}
+                                            {{ order.total_amount }} FCFA
+                                            {% else %}
+                                            {{ order.total_amount|add:5000 }} FCFA
+                                            {% endif %}
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Informations de livraison</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Adresse:</strong><br>{{ order.shipping_address }}</p>
+                    <p><strong>Ville:</strong> {{ order.city }}</p>
+                    <p><strong>Téléphone:</strong> {{ order.phone_number }}</p>
+                    {% if order.notes %}
+                    <p><strong>Notes:</strong><br>{{ order.notes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Statut de la commande</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge 
+                            {% if order.status == 'PENDING' %}bg-warning text-dark
+                            {% elif order.status == 'CONFIRMED' %}bg-info
+                            {% elif order.status == 'PROCESSING' %}bg-primary
+                            {% elif order.status == 'SHIPPED' %}bg-secondary
+                            {% elif order.status == 'DELIVERED' %}bg-success
+                            {% elif order.status == 'CANCELLED' %}bg-danger
+                            {% endif %} fs-6">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar 
+                            {% if order.status == 'PENDING' %}bg-warning" style="width: 20%"
+                            {% elif order.status == 'CONFIRMED' %}bg-info" style="width: 40%"
+                            {% elif order.status == 'PROCESSING' %}bg-primary" style="width: 60%"
+                            {% elif order.status == 'SHIPPED' %}bg-secondary" style="width: 80%"
+                            {% elif order.status == 'DELIVERED' %}bg-success" style="width: 100%"
+                            {% elif order.status == 'CANCELLED' %}bg-danger" style="width: 100%"
+                            {% endif %}">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>En attente</span>
+                        <span>Confirmée</span>
+                        <span>En traitement</span>
+                        <span>Expédiée</span>
+                        <span>Livrée</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Informations de paiement</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Méthode:</strong> {{ order.get_payment_method_display }}</p>
+                    <p><strong>Date de commande:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Dernière mise à jour:</strong> {{ order.updated_at|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

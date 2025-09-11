@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ shoe.name }} - Franck'K Shoes CM{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Boutique</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'product_list' %}?category={{ shoe.category.id }}">{{ shoe.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ shoe.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ shoe.image.url }}" alt="{{ shoe.name }}" class="img-fluid rounded shadow">
+        </div>
+        <div class="col-md-6">
+            <h1 class="display-5">{{ shoe.name }}</h1>
+            <p class="text-muted">{{ shoe.category.name }}</p>
+            <h3 class="text-primary">{{ shoe.price }} FCFA</h3>
+            
+            {% if shoe.stock > 0 %}
+            <span class="badge bg-success">En stock</span>
+            {% else %}
+            <span class="badge bg-danger">Rupture de stock</span>
+            {% endif %}
+            
+            <div class="my-4">
+                <h5>Description</h5>
+                <p>{{ shoe.description }}</p>
+            </div>
+            
+            <form id="add-to-cart-form">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="size" class="form-label">Pointure</label>
+                    <select class="form-select" id="size" required>
+                        <option value="">Choisissez une pointure</option>
+                        {% for size in shoe.get_available_sizes %}
+                        <option value="{{ size }}">{{ size }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="color" class="form-label">Couleur</label>
+                    <select class="form-select" id="color" required>
+                        <option value="">Choisissez une couleur</option>
+                        {% for color in shoe.get_colors_list %}
+                        <option value="{{ color }}">{{ color }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantité</label>
+                    <input type="number" class="form-control" id="quantity" value="1" min="1" max="{{ shoe.stock }}">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg" {% if shoe.stock == 0 %}disabled{% endif %}>
+                    <i class="fas fa-cart-plus"></i> Ajouter au panier
+                </button>
+            </form>
+            
+            <div class="mt-4">
+                <h5>Partager ce produit</h5>
+                <div class="social-share">
+                    <a href="{% url 'share_product' shoe.id %}?platform=facebook" class="btn btn-outline-primary me-2">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a>
+                    <a href="{% url 'share_product' shoe.id %}?platform=whatsapp" class="btn btn-outline-success me-2">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="{% url 'share_product' shoe.id %}?platform=twitter" class="btn btn-outline-info">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h5>Livraison et retours</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-truck text-primary me-2"></i> Livraison gratuite à partir de 50 000 FCFA</li>
+                    <li><i class="fas fa-undo text-primary me-2"></i> Retours acceptés sous 14 jours</li>
+                    <li><i class="fas fa-shield-alt text-primary me-2"></i> Paiement sécurisé</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Produits similaires -->
+    {% if related_shoes %}
+    <div class="row mt-5">
+        <h3>Produits similaires</h3>
+        {% for shoe in related_shoes %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ shoe.image.url }}" class="card-img-top" alt="{{ shoe.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ shoe.name }}</h5>
+                    <p class="card-text text-primary fw-bold">{{ shoe.price }} FCFA</p>
+                    <a href="{% url 'product_detail' shoe.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('add-to-cart-form');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const size = document.getElementById('size').value;
+        const color = document.getElementById('color').value;
+        const quantity = document.getElementById('quantity').value;
+        
+        if (!size || !color) {
+            showAlert('Veuillez sélectionner une pointure et une couleur', 'danger');
+            return;
+        }
+        
+        addToCart({{ shoe.id }}, size, color, quantity);
+    });
+    
+    function addToCart(shoeId, size, color, quantity) {
+        fetch(`/panier/ajouter/${shoeId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                size: size,
+                color: color,
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mettre à jour le compteur du panier
+                document.querySelectorAll('.cart-count').forEach(span => {
+                    span.textContent = data.cart_count;
+                });
+                
+                // Afficher une notification
+                showAlert('Produit ajouté au panier!', 'success');
+            }
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        // Supprimer l'alerte après 3 secondes
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}

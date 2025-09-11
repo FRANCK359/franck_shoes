@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Panier - Franck'K Shoes CM{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 text-center">🛒 Votre panier</h1>
+    
+    {% if cart %}
+    <div class="row g-4">
+        <!-- Liste des articles -->
+        <div class="col-12 col-md-8">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-body">
+                    {% for item in cart %}
+                    <div class="row align-items-center mb-4 pb-3 border-bottom">
+                        <!-- Image -->
+                        <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
+                            <img src="{{ item.shoe.image.url }}" alt="{{ item.shoe.name }}" class="img-fluid rounded" style="max-height:150px;">
+                        </div>
+                        <!-- Détails -->
+                        <div class="col-12 col-md-6 text-center text-md-start mb-2 mb-md-0">
+                            <h5>{{ item.shoe.name }}</h5>
+                            <p class="text-muted small">Pointure: {{ item.size }} | Couleur: {{ item.color }}</p>
+                            <p class="text-primary fw-bold">{{ item.price }} FCFA</p>
+                        </div>
+                        <!-- Actions -->
+                        <div class="col-12 col-md-3 d-flex flex-column align-items-center align-items-md-end gap-2">
+                            <div class="btn-group mb-2" role="group">
+                                <button class="btn btn-sm btn-outline-secondary update-quantity" data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}" data-action="decrease">-</button>
+                                <span class="btn btn-sm btn-light disabled">{{ item.quantity }}</span>
+                                <button class="btn btn-sm btn-outline-secondary update-quantity" data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}" data-action="increase">+</button>
+                            </div>
+                            <p class="fw-bold mb-0">{{ item.total_price }} FCFA</p>
+                            <button class="btn btn-sm btn-danger remove-item" data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}">
+                                <i class="fas fa-trash"></i> Retirer
+                            </button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-center text-muted">Aucun article dans le panier.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Récapitulatif -->
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-header bg-primary text-white text-center text-md-start">
+                    <h5 class="mb-0">Récapitulatif</h5>
+                </div>
+                <div class="card-body">
+                    {% with total=cart.get_total_price %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sous-total</span>
+                        <span>{{ total }} FCFA</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Livraison</span>
+                        <span>
+                            {% if total >= 50000 %}
+                            <span class="badge bg-success">Gratuite</span>
+                            {% else %}
+                            5 000 FCFA
+                            {% endif %}
+                        </span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3 fs-5">
+                        <strong>Total</strong>
+                        <strong>
+                            {% if total >= 50000 %}
+                                {{ total }} FCFA
+                            {% else %}
+                                {{ total|add:"5000" }} FCFA
+                            {% endif %}
+                        </strong>
+                    </div>
+                    <a href="{% url 'checkout' %}" class="btn btn-lg btn-primary w-100 mb-2">
+                        <i class="fas fa-credit-card"></i> Passer la commande
+                    </a>
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-primary w-100">
+                        Continuer mes achats
+                    </a>
+                    {% endwith %}
+                </div>
+            </div>
+            
+            <!-- Livraison gratuite -->
+            <div class="card shadow-sm rounded-4 mt-4">
+                <div class="card-body text-center text-md-start">
+                    <h6 class="fw-bold">🎁 Livraison offerte</h6>
+                    <p class="small text-muted">Livraison gratuite à partir de 50 000 FCFA.</p>
+                    {% with remaining=50000|add:"-"|add:cart.get_total_price %}
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-info" role="progressbar" 
+                             style="width: {% widthratio cart.get_total_price 50000 100 %}%;" 
+                             aria-valuenow="{{ cart.get_total_price }}" 
+                             aria-valuemin="0" aria-valuemax="50000">
+                        </div>
+                    </div>
+                    <p class="small text-muted">
+                        {% if cart.get_total_price >= 50000 %}
+                            ✅ Félicitations ! Livraison gratuite activée.
+                        {% else %}
+                            Il manque <strong>{{ remaining }} FCFA</strong> pour la livraison gratuite.
+                        {% endif %}
+                    </p>
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+        <h3>Votre panier est vide</h3>
+        <p class="text-muted">Parcourez nos collections et trouvez vos chaussures idéales.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-lg btn-primary">Découvrir la boutique</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.update-quantity').forEach(button => {
+        button.addEventListener('click', function() {
+            const shoeId = this.dataset.shoeId;
+            const size = this.dataset.size;
+            const color = this.dataset.color;
+            const action = this.dataset.action;
+            const quantityEl = this.closest('.btn-group').querySelector('.disabled');
+            let quantity = parseInt(quantityEl.textContent);
+            if(action==='increase') quantity += 1;
+            if(action==='decrease' && quantity>1) quantity -=1;
+            updateCart(shoeId,size,color,quantity);
+        });
+    });
+    document.querySelectorAll('.remove-item').forEach(button=>{
+        button.addEventListener('click',function(){
+            const shoeId=this.dataset.shoeId;
+            const size=this.dataset.size;
+            const color=this.dataset.color;
+            removeFromCart(shoeId,size,color);
+        });
+    });
+
+    function updateCart(shoeId,size,color,quantity){
+        fetch(`/panier/mettre-a-jour/${shoeId}/`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+            body:JSON.stringify({size,color,quantity})
+        }).then(res=>res.json()).then(data=>{if(data.success) location.reload();});
+    }
+    function removeFromCart(shoeId,size,color){
+        fetch(`/panier/supprimer/${shoeId}/`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+            body:JSON.stringify({size,color})
+        }).then(res=>res.json()).then(data=>{if(data.success) location.reload();});
+    }
+    function getCookie(name){
+        let cookieValue=null;
+        if(document.cookie && document.cookie!==''){
+            document.cookie.split(';').forEach(c=>{
+                if(c.trim().startsWith(name+'=')){
+                    cookieValue=decodeURIComponent(c.trim().substring(name.length+1));
+                }
+            });
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

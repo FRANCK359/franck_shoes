@@ -1,0 +1,1 @@
+web: gunicorn franck_shoes.wsgi --log-file -

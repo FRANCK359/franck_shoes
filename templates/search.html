@@ -1,0 +1,171 @@
+11. search.html
+{% extends 'base.html' %}
+
+{% block title %}Recherche - Franck'K Shoes CM{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Résultats de recherche</h1>
+    
+    <div class="row">
+        <!-- Filtres -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Filtres</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'search' %}">
+                        <input type="hidden" name="q" value="{{ query }}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Catégorie</label>
+                            <select name="category" class="form-select">
+                                <option value="">Toutes les catégories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:'s' %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Prix minimum</label>
+                            <input type="number" name="min_price" class="form-control" value="{{ min_price }}" placeholder="0">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Prix maximum</label>
+                            <input type="number" name="max_price" class="form-control" value="{{ max_price }}" placeholder="100000">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Couleur</label>
+                            <select name="color" class="form-select">
+                                <option value="">Toutes les couleurs</option>
+                                <option value="RED" {% if selected_color == 'RED' %}selected{% endif %}>Rouge</option>
+                                <option value="BLK" {% if selected_color == 'BLK' %}selected{% endif %}>Noir</option>
+                                <option value="WHT" {% if selected_color == 'WHT' %}selected{% endif %}>Blanc</option>
+                                <option value="BLU" {% if selected_color == 'BLU' %}selected{% endif %}>Bleu</option>
+                                <option value="GRN" {% if selected_color == 'GRN' %}selected{% endif %}>Vert</option>
+                                <option value="YLW" {% if selected_color == 'YLW' %}selected{% endif %}>Jaune</option>
+                                <option value="GRY" {% if selected_color == 'GRY' %}selected{% endif %}>Gris</option>
+                                <option value="BRW" {% if selected_color == 'BRW' %}selected{% endif %}>Marron</option>
+                                <option value="PNK" {% if selected_color == 'PNK' %}selected{% endif %}>Rose</option>
+                                <option value="PRP" {% if selected_color == 'PRP' %}selected{% endif %}>Violet</option>
+                                <option value="ORG" {% if selected_color == 'ORG' %}selected{% endif %}>Orange</option>
+                                <option value="MUL" {% if selected_color == 'MUL' %}selected{% endif %}>Multicolor</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Appliquer les filtres</button>
+                        <a href="{% url 'search' %}?q={{ query }}" class="btn btn-outline-secondary w-100 mt-2">Réinitialiser</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Résultats -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>{% if query %}Résultats pour "{{ query }}"{% else %}Tous les produits{% endif %}</h2>
+                <span class="text-muted">{{ shoes.count }} produit(s) trouvé(s)</span>
+            </div>
+            
+            {% if shoes %}
+            <div class="row">
+                {% for shoe in shoes %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ shoe.image.url }}" class="card-img-top" alt="{{ shoe.name }}" style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ shoe.name }}</h5>
+                            <p class="card-text text-muted">{{ shoe.category.name }}</p>
+                            <p class="card-text text-primary fw-bold">{{ shoe.price }} FCFA</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{% url 'product_detail' shoe.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
+                                <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4>Aucun produit ne correspond à votre recherche</h4>
+                <p class="text-muted">Essayez de modifier vos critères de recherche ou consultez <a href="{% url 'product_list' %}">tous nos produits</a>.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de l'ajout au panier
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const shoeId = this.getAttribute('data-shoe-id');
+            addToCart(shoeId, 38, 'Noir', 1);
+        });
+    });
+    
+    function addToCart(shoeId, size, color, quantity) {
+        fetch(`/panier/ajouter/${shoeId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                size: size,
+                color: color,
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelectorAll('.cart-count').forEach(span => {
+                    span.textContent = data.cart_count;
+                });
+                showAlert('Produit ajouté au panier!', 'success');
+            }
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+        document.body.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), 3000);
+    }
+});
+</script>
+{% endblock %}

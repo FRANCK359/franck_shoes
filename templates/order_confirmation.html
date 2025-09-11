@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmation de commande - Franck'K Shoes CM{% endblock %}
+
+{% block content %}
+<div class="container py-5" id="invoice">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card text-center shadow-lg">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-check-circle"></i> Commande confirmée</h3>
+                    <!-- Bouton imprimer -->
+                    <button class="btn btn-light btn-sm" onclick="printInvoice()">
+                        <i class="fas fa-file-pdf text-danger"></i> Télécharger en PDF
+                    </button>
+                </div>
+                <div class="card-body">
+                    <i class="fas fa-shopping-bag fa-5x text-success mb-4"></i>
+                    <h4 class="card-title">Merci pour votre commande !</h4>
+                    <p class="card-text">Votre commande a été enregistrée avec succès.</p>
+                    
+                    <div class="alert alert-info">
+                        <h5>Référence de commande: <strong>#{{ order.id }}</strong></h5>
+                        <p>Un email de confirmation a été envoyé à votre adresse email.</p>
+                    </div>
+                    
+                    <div class="row text-start mt-4">
+                        <div class="col-md-6">
+                            <h5>Résumé de la commande</h5>
+                            <p><strong>Total:</strong> {{ order.total_amount }} FCFA</p>
+                            <p><strong>Méthode de paiement:</strong> {{ order.get_payment_method_display }}</p>
+                            <p><strong>Statut:</strong> <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Adresse de livraison</h5>
+                            <p>{{ order.shipping_address }}</p>
+                            <p>{{ order.city }}</p>
+                            <p>{{ order.phone_number }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5>Prochaines étapes</h5>
+                        <p>Nous vous contacterons dans les plus brefs délais pour confirmer votre commande et organiser la livraison.</p>
+                    </div>
+                    
+                    <div class="mt-4 d-print-none">
+                        <a href="{% url 'index' %}" class="btn btn-primary">Retour à l'accueil</a>
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-primary">Continuer mes achats</a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    © 2025 Franck'K Shoes CM - Facture générée automatiquement
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function printInvoice() {
+    // On n'imprime que la section facture
+    var invoice = document.getElementById("invoice").innerHTML;
+    var win = window.open("", "_blank");
+    win.document.write(`
+        <html>
+            <head>
+                <title>Facture - Franck'K Shoes CM</title>
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    .text-center { text-align: center; }
+                    .text-end { text-align: right; }
+                    .bordered { border: 1px solid #ddd; padding: 10px; margin: 5px; }
+                </style>
+            </head>
+            <body onload="window.print(); window.close();">
+                ${invoice}
+            </body>
+        </html>
+    `);
+    win.document.close();
+}
+</script>
+{% endblock %}
