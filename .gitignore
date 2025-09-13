@@ -1,0 +1,17 @@
+# Environnements virtuels
+venv/
+.env
+
+# Base de données locale
+db.sqlite3
+
+# Fichiers compilés
+__pycache__/
+*.pyc
+
+# Staticfiles générés
+/staticfiles/
+/media/
+
+# Paquets installés
+*.egg-info

@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-import django_heroku
 import dj_database_url
 from django.core.management.utils import get_random_secret_key
 import environ
@@ -43,7 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # pour servir les fichiers statiques sur Heroku
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'franck_shoes.urls'
@@ -74,10 +73,9 @@ WSGI_APPLICATION = 'franck_shoes.wsgi.application'
 # Base de données
 # -------------------------
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        ssl_require=False
+    'default': env.db(
+        "DATABASE_URL",
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
     )
 }
 
@@ -136,8 +134,3 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/compte/connexion/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# -------------------------
-# Heroku settings
-# -------------------------
-django_heroku.settings(locals())
