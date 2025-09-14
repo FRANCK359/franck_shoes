@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from cloudinary.models import CloudinaryField
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -48,7 +49,7 @@ class Shoe(models.Model):
         verbose_name="Pointure maximale"
     )
     stock = models.PositiveIntegerField(default=0, verbose_name="Stock")
-    image = models.ImageField(upload_to='shoes/', verbose_name="Image")
+    image = CloudinaryField( folder='shoes', verbose_name="Image")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Date de modification")
     featured = models.BooleanField(default=False, verbose_name="En vedette")
@@ -95,7 +96,7 @@ class UserProfile(models.Model):
     city = models.CharField(max_length=50, choices=CITIES, blank=True, verbose_name="Ville")
     address = models.TextField(blank=True, verbose_name="Adresse")
     date_of_birth = models.DateField(null=True, blank=True, verbose_name="Date de naissance")
-    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True, verbose_name="Photo de profil")
+    profile_picture = CloudinaryField(folder='profiles', null=True, blank=True, verbose_name="Photo de profil")
     
     class Meta:
         verbose_name = "Profil utilisateur"

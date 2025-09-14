@@ -1,8 +1,7 @@
 import os
 from pathlib import Path
-import dj_database_url
-from django.core.management.utils import get_random_secret_key
 import environ
+from django.core.management.utils import get_random_secret_key
 
 # -------------------------
 # Base directory & environ
@@ -29,6 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shoes',  # ton app principale
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # -------------------------
@@ -105,8 +106,9 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media sur Cloudinary
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+MEDIA_URL = '/media/'  # utilisé par Django, mais Cloudinary sert les fichiers
 
 # -------------------------
 # Session panier
