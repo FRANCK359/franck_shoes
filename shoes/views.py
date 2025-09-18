@@ -12,11 +12,20 @@ from .forms import OrderForm, ContactForm, UserRegistrationForm, UserProfileForm
 from .cart import Cart
 import json
 
+# --- Dictionnaire des frais d'expédition par ville ---
+CITY_SHIPPING_COSTS = {
+    "Douala": 2000,
+    "Yaoundé": 2500,
+    "Bafoussam": 3000,
+    "Garoua": 4000,
+    "Maroua": 4500,
+    "Autres": 5000,  # valeur par défaut
+}
+
 def index(request):
     featured_shoes = Shoe.objects.filter(featured=True)[:8]
     categories = Category.objects.all()
-    # Récupérer les messages approuvés
-    messages_clients = ContactMessage.objects.filter(approved=True).order_by('-created_at')[:3]  # 3 derniers messages
+    messages_clients = ContactMessage.objects.filter(approved=True).order_by('-created_at')[:3]
     
     return render(request, 'index.html', {
         'featured_shoes': featured_shoes,
@@ -111,7 +120,13 @@ def checkout(request):
         if form.is_valid():
             order = form.save(commit=False)
             order.customer = request.user
-            order.total_amount = cart.get_total_price()
+
+            # ✅ Frais d'expédition selon la ville
+            city = form.cleaned_data.get('city', 'Autres')
+            shipping_cost = CITY_SHIPPING_COSTS.get(city, CITY_SHIPPING_COSTS["Autres"])
+
+            order.total_amount = cart.get_total_price() + shipping_cost
+            order.shipping_cost = shipping_cost  # il faut que ton modèle Order ait ce champ
             order.save()
             
             for item in cart:
@@ -144,18 +159,16 @@ def contact(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             contact_message = form.save(commit=False)
-            contact_message.approved = False  # toujours à approuver par l’admin
+            contact_message.approved = False
             contact_message.save()
             messages.success(request, 'Votre message a été envoyé avec succès! Il sera publié après validation.')
             return redirect('contact')
     else:
         form = ContactForm()
     
-    # Récupérer les avis approuvés pour les afficher
     testimonials = ContactMessage.objects.filter(approved=True, is_testimonial=True).order_by('-created_at')[:5]
 
     return render(request, 'contact.html', {'form': form, 'testimonials': testimonials})
-
 
 def is_vendor(user):
     return user.groups.filter(name='Vendor').exists() or user.is_superuser
@@ -179,17 +192,16 @@ def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)   # on ne sauvegarde pas encore
-            user.set_password(form.cleaned_data["password1"])  # hash du mot de passe
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data["password1"])
             user.save()
 
-            # Création ou mise à jour du UserProfile
             user_profile, created = UserProfile.objects.get_or_create(user=user)
             user_profile.phone_number = form.cleaned_data.get("phone_number", "")
             user_profile.city = form.cleaned_data.get("city", "")
             user_profile.save()
 
-            login(request, user)  # connexion auto
+            login(request, user)
             messages.success(request, f'Inscription réussie ! Bienvenue, {user.username} !')
             return redirect('index')
         else:
@@ -198,7 +210,6 @@ def register(request):
         form = UserRegistrationForm()
     
     return render(request, 'registration/register.html', {'form': form})
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -220,7 +231,6 @@ def user_login(request):
 
 @login_required
 def profile(request):
-    # Crée un UserProfile si inexistant
     if not hasattr(request.user, 'userprofile'):
         UserProfile.objects.create(user=request.user)
     
@@ -240,7 +250,6 @@ def profile(request):
         'orders': orders
     })
 
-
 @login_required
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id, customer=request.user)
@@ -250,7 +259,6 @@ def share_product(request, shoe_id):
     shoe = get_object_or_404(Shoe, id=shoe_id)
     platform = request.GET.get('platform', '')
     
-    # URLs de partage
     share_urls = {
         'facebook': f'https://www.facebook.com/sharer/sharer.php?u={request.build_absolute_uri(shoe.get_absolute_url())}',
         'whatsapp': f'https://api.whatsapp.com/send?text=Découvrez cette chaussure: {request.build_absolute_uri(shoe.get_absolute_url())}',
@@ -297,14 +305,27 @@ def search(request):
         'max_price': max_price,
         'selected_color': color
     })
+
 @login_required
 def user_logout(request):
     logout(request)
     messages.info(request, "Vous êtes déconnecté(e) avec succès.")
-    return redirect('index')  # Redirige vers la page d'accueil
+    return redirect('index')
 
 def about(request):
     return render(request, 'about.html')
 
 def terms(request):
     return render(request, 'terms.html')
+from django.http import JsonResponse
+
+def set_cart_city(request):
+    """
+    Met à jour la ville sélectionnée dans la session pour calculer les frais de livraison
+    """
+    if request.method == "POST":
+        city = request.POST.get("city")
+        if city:
+            request.session['ville'] = city
+            return JsonResponse({'success': True, 'city': city})
+    return JsonResponse({'success': False})

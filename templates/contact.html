@@ -2,13 +2,92 @@
 
 {% block title %}Contact - Franck'K Shoes CM{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ================= Styles généraux ================= */
+.text-gradient {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.card-header.bg-gradient-primary {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b) !important;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff4b4b, #1a1a1a);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+    border-radius: 50px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255,75,75,0.6);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+input, textarea, select {
+    border-radius: 0.75rem;
+    border: 1px solid #ccc;
+    padding: 0.55rem 0.75rem;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #4fc3ff;
+    box-shadow: 0 0 8px rgba(79,195,255,0.5);
+}
+
+.text-primary {
+    color: #4fc3ff !important;
+}
+
+a {
+    color: #ff4b4b;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#map {
+    border-radius: 0 0 1rem 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    .card-body { padding: 1rem; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row g-4">
         <!-- Formulaire -->
         <div class="col-md-8">
             <h1 class="mb-4 text-gradient">Contactez-nous</h1>
-            <div class="card shadow-sm rounded-4">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
@@ -70,7 +149,7 @@
         <!-- Infos & Carte -->
         <div class="col-md-4">
             <!-- Infos -->
-            <div class="card mb-4 shadow-sm rounded-4">
+            <div class="card mb-4 shadow-sm">
                 <div class="card-header bg-gradient-primary text-white">
                     <h5 class="mb-0">Informations de contact</h5>
                 </div>
@@ -78,7 +157,7 @@
                     <p><i class="fas fa-map-marker-alt text-primary me-2"></i> <strong>Adresse:</strong><br>
                     Douala Akwa, après Finex Voyage<br>
                     En face du grand marché de chaussures<br>
-                    À côté de Garanti Voyage, Numéro A06</p>
+                    À côté de Central Voyage, Numéro A06</p>
 
                     <p><i class="fas fa-phone text-primary me-2"></i> <strong>Téléphone:</strong><br>
                     <a href="tel:652000228">652 00 02 28</a> / 
@@ -94,12 +173,12 @@
             </div>
 
             <!-- Carte OpenStreetMap -->
-            <div class="card shadow-sm rounded-4">
+            <div class="card shadow-sm">
                 <div class="card-header bg-gradient-primary text-white">
                     <h5 class="mb-0">Localisation</h5>
                 </div>
                 <div class="card-body p-0">
-                    <div id="map" style="width: 100%; height: 300px;" class="rounded-bottom"></div>
+                    <div id="map" style="width: 100%; height: 300px;"></div>
                 </div>
             </div>
         </div>
@@ -108,20 +187,16 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Leaflet CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    // Initialisation de la carte avec OpenStreetMap
-    var map = L.map('map').setView([4.051056, 9.767868], 16); // Coordonnées Douala Akwa
-
+    var map = L.map('map').setView([4.051056, 9.767868], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Ajout d’un marqueur
     L.marker([4.051056, 9.767868]).addTo(map)
         .bindPopup("<b>Franck'K Shoes CM</b><br>Douala Akwa")
         .openPopup();

@@ -83,4 +83,5 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
+     path('cart/set_city/', views.set_cart_city, name='set_cart_city'),
 ]

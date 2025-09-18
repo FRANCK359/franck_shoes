@@ -2,107 +2,165 @@
 
 {% block title %}À propos - Franck'K Shoes CM{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ================= Styles À propos ================= */
+h1 {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    text-align: center;
+}
+
+h3 {
+    color: #ff4b4b;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.85);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+p, ul, li {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+ul li {
+    margin-bottom: 0.5rem;
+}
+
+.container {
+    max-width: 900px;
+}
+
+.text-muted {
+    color: #555 !important;
+}
+
+i.fas {
+    color: #4fc3ff;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    h1 { font-size: 2rem; }
+    h3 { font-size: 1.25rem; }
+    .container { padding: 0 1rem; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <h1 class="text-center mb-5">À propos de Franck'K Shoes CM</h1>
-            
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3>Notre histoire</h3>
-                    <p>Franck'K Shoes CM est née de la passion pour les chaussures de qualité et du désir de rendre accessible au plus grand nombre des produits de marque à des prix abordables.</p>
-                    <p>Fondée en 2023, notre boutique s'est rapidement imposée comme une référence dans la vente de chaussures à Douala et dans tout le Cameroun.</p>
+    <h1 class="mb-5">À propos de Franck'K Shoes CM</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h3>Notre histoire</h3>
+            <p>Franck'K Shoes CM est née de la passion pour les chaussures de qualité et du désir de rendre accessible au plus grand nombre des produits de marque à des prix abordables.</p>
+            <p>Fondée en 2023, notre boutique s'est rapidement imposée comme une référence dans la vente de chaussures à Douala et dans tout le Cameroun.</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h3>Notre mission</h3>
+            <p>Nous nous engageons à offrir à nos clients :</p>
+            <ul>
+                <li>Des chaussures de qualité supérieure importées directement de Chine</li>
+                <li>Des prix compétitifs et abordables</li>
+                <li>Un service client exceptionnel</li>
+                <li>Une livraison rapide dans tout le Cameroun</li>
+                <li>Plusieurs options de paiement sécurisées</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h3>Pourquoi nous choisir ?</h3>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Qualité garantie</h5>
+                            <p class="text-muted">Tous nos produits sont soigneusement sélectionnés et testés pour garantir leur qualité.</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3>Notre mission</h3>
-                    <p>Nous nous engageons à offrir à nos clients :</p>
-                    <ul>
-                        <li>Des chaussures de qualité supérieure importées directement de Chine</li>
-                        <li>Des prix compétitifs et abordables</li>
-                        <li>Un service client exceptionnel</li>
-                        <li>Une livraison rapide dans tout le Cameroun</li>
-                        <li>Plusieurs options de paiement sécurisées</li>
-                    </ul>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-shipping-fast fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Livraison rapide</h5>
+                            <p class="text-muted">Nous livrons dans toutes les villes du Cameroun dans les plus brefs délais.</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3>Pourquoi nous choisir ?</h3>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex">
-                                <div class="me-3">
-                                    <i class="fas fa-check-circle text-primary fa-2x"></i>
-                                </div>
-                                <div>
-                                    <h5>Qualité garantie</h5>
-                                    <p class="text-muted">Tous nos produits sont soigneusement sélectionnés et testés pour garantir leur qualité.</p>
-                                </div>
-                            </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-headset fa-2x"></i>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex">
-                                <div class="me-3">
-                                    <i class="fas fa-shipping-fast text-primary fa-2x"></i>
-                                </div>
-                                <div>
-                                    <h5>Livraison rapide</h5>
-                                    <p class="text-muted">Nous livrons dans toutes les villes du Cameroun dans les plus brefs délais.</p>
-                                </div>
-                            </div>
+                        <div>
+                            <h5>Support client</h5>
+                            <p class="text-muted">Notre équipe est disponible 7j/7 pour répondre à vos questions.</p>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex">
-                                <div class="me-3">
-                                    <i class="fas fa-headset text-primary fa-2x"></i>
-                                </div>
-                                <div>
-                                    <h5>Support client</h5>
-                                    <p class="text-muted">Notre équipe est disponible 7j/7 pour répondre à vos questions.</p>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-undo fa-2x"></i>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="d-flex">
-                                <div class="me-3">
-                                    <i class="fas fa-undo text-primary fa-2x"></i>
-                                </div>
-                                <div>
-                                    <h5>Retours faciles</h5>
-                                    <p class="text-muted">Vous n'êtes pas satisfait ? Nous acceptons les retours sous 14 jours.</p>
-                                </div>
-                            </div>
+                        <div>
+                            <h5>Retours faciles</h5>
+                            <p class="text-muted">Vous n'êtes pas satisfait ? Nous acceptons les retours sous 1 jours.</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3>Notre boutique physique</h3>
-                    <p>Venez nous rendre visite dans notre boutique physique :</p>
-                    <p>
-                        <strong>Adresse :</strong><br>
-                        Douala Akwa, après Finex Voyage<br>
-                        En face du grand marché de chaussures<br>
-                        À côté de Garanti Voyage, Numéro A06
-                    </p>
-                    <p>
-                        <strong>Téléphone :</strong> <a href="tel:652000228">652 00 02 28/659340824</a><br>
-                        <strong>Email :</strong> <a href="mailto:tachifranck81@gmail.com">tachifranck81@gmail.com</a>
-                    </p>
-                    <p>
-                        <strong>Horaires d'ouverture :</strong><br>
-                        Lundi - Samedi: 8h - 19h<br>
-                        Dimanche: 9h - 15h
-                    </p>
-                </div>
-            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h3>Notre boutique physique</h3>
+            <p>Venez nous rendre visite dans notre boutique physique :</p>
+            <p>
+                <strong>Adresse :</strong><br>
+                Douala Akwa, après Finex Voyage<br>
+                En face du grand marché de chaussures<br>
+                À côté de Centrale Voyage, Numéro A06
+            </p>
+            <p>
+                <strong>Téléphone :</strong> <a href="tel:652000228">+237652 00 02 28/659340824</a><br>
+                <strong>Email :</strong> <a href="mailto:tachifranck81@gmail.com">tachifranck81@gmail.com</a>
+            </p>
+            <p>
+                <strong>Horaires d'ouverture :</strong><br>
+                Lundi - Samedi: 8h - 17h<br>
+                Dimanche: 9h - 14h
+            </p>
         </div>
     </div>
 </div>

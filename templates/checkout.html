@@ -2,11 +2,106 @@
 
 {% block title %}Commander - Franck'K Shoes CM{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ================= Styles Commande ================= */
+h1 {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.85);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 1rem 1rem 0 0;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff4b4b, #1a1a1a);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255,75,75,0.6);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107, #ff8f00);
+    color: #1a1a1a;
+    border: none;
+    font-weight: 600;
+}
+
+.btn-warning:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(255,191,0,0.5);
+}
+
+.badge {
+    font-weight: 600;
+    padding: 0.55rem 0.9rem;
+    border-radius: 50px;
+}
+
+.badge.bg-primary { background: #4fc3ff; color: #1a1a1a; }
+.badge.bg-warning { background: #ffc107; color: #1a1a1a; }
+.badge.bg-success { background: #28a745; color: #fff; }
+.badge.bg-info { background: #17a2b8; color: #fff; }
+
+.text-success { color: #28a745 !important; }
+
+/* Inputs */
+input, select, textarea {
+    border-radius: 0.75rem;
+    border: 1px solid #ccc;
+    padding: 0.55rem 0.8rem;
+    width: 100%;
+    font-size: 0.95rem;
+    transition: border 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #4fc3ff;
+    box-shadow: 0 0 10px rgba(79,195,255,0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    .card { margin-bottom: 1.5rem; }
+    h1 { font-size: 1.95rem; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <h1 class="mb-4">Finaliser votre commande</h1>
     
     <div class="row">
+        <!-- Formulaire de commande -->
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-header">
@@ -16,21 +111,23 @@
                     <form method="post">
                         {% csrf_token %}
                         
+                        <!-- Adresse de livraison -->
                         <div class="mb-3">
                             <label for="id_shipping_address" class="form-label">Adresse de livraison</label>
                             {{ form.shipping_address }}
                             {% if form.shipping_address.errors %}
-                            <div class="text-danger">{{ form.shipping_address.errors }}</div>
+                                <div class="text-danger">{{ form.shipping_address.errors }}</div>
                             {% endif %}
                         </div>
                         
+                        <!-- Ville et téléphone -->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_city" class="form-label">Ville</label>
                                     {{ form.city }}
                                     {% if form.city.errors %}
-                                    <div class="text-danger">{{ form.city.errors }}</div>
+                                        <div class="text-danger">{{ form.city.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
@@ -39,20 +136,36 @@
                                     <label for="id_phone_number" class="form-label">Numéro de téléphone</label>
                                     {{ form.phone_number }}
                                     {% if form.phone_number.errors %}
-                                    <div class="text-danger">{{ form.phone_number.errors }}</div>
+                                        <div class="text-danger">{{ form.phone_number.errors }}</div>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Méthode de paiement -->
                         <div class="mb-3">
                             <label for="id_payment_method" class="form-label">Méthode de paiement</label>
                             {{ form.payment_method }}
                             {% if form.payment_method.errors %}
-                            <div class="text-danger">{{ form.payment_method.errors }}</div>
+                                <div class="text-danger">{{ form.payment_method.errors }}</div>
                             {% endif %}
                         </div>
+
+                        <!-- Message de confirmation de paiement -->
+                        <div class="mb-3">
+                            <label for="id_payment_confirmation_message" class="form-label">
+                                Message de confirmation de paiement (MTN / Orange)
+                            </label>
+                            {{ form.payment_confirmation_message }}
+                            {% if form.payment_confirmation_message.errors %}
+                                <div class="text-danger">{{ form.payment_confirmation_message.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">
+                                Copiez le message reçu après votre paiement et collez-le ici pour confirmer.
+                            </small>
+                        </div>
                         
+                        <!-- Notes supplémentaires -->
                         <div class="mb-3">
                             <label for="id_notes" class="form-label">Notes supplémentaires (optionnel)</label>
                             {{ form.notes }}
@@ -64,6 +177,7 @@
             </div>
         </div>
         
+        <!-- Récapitulatif de la commande -->
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
@@ -88,9 +202,9 @@
                         <span>Livraison</span>
                         <span>
                             {% if cart.get_total_price >= 50000 %}
-                            <span class="text-success">Gratuite</span>
+                                <span class="text-success">Gratuite</span>
                             {% else %}
-                            5 000 FCFA
+                                2 000 FCFA
                             {% endif %}
                         </span>
                     </div>
@@ -101,12 +215,46 @@
                         <strong>Total</strong>
                         <strong>
                             {% if cart.get_total_price >= 50000 %}
-                            {{ cart.get_total_price }} FCFA
+                                {{ cart.get_total_price }} FCFA
                             {% else %}
-                            {{ cart.get_total_price|add:5000 }} FCFA
+                                {{ cart.get_total_price|add:2000 }} FCFA
                             {% endif %}
                         </strong>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Boutons de paiement direct MTN / Orange -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6>Payer directement via Mobile Money</h6>
+                    
+                    {% if cart.get_total_price >= 50000 %}
+                        {% with total_amount=cart.get_total_price %}
+                            <a href="https://mtn.cm/mobilemoney/pay?number=652000228&amount={{ total_amount }}"
+                               class="btn btn-primary w-100 mb-2" target="_blank">
+                                Payer avec MTN Mobile Money
+                            </a>
+
+                            <a href="https://orange.cm/money/pay?number=659340824&amount={{ total_amount }}"
+                               class="btn btn-warning w-100" target="_blank">
+                                Payer avec Orange Money
+                            </a>
+                        {% endwith %}
+                    {% else %}
+                        {% with total_amount=cart.get_total_price|add:2000 %}
+                            <a href="https://mtn.cm/mobilemoney/pay?number=652000228&amount={{ total_amount }}"
+                               class="btn btn-primary w-100 mb-2" target="_blank">
+                                Payer avec MTN Mobile Money
+                            </a>
+
+                            <a href="https://orange.cm/money/pay?number=659340824&amount={{ total_amount }}"
+                               class="btn btn-warning w-100" target="_blank">
+                                Payer avec Orange Money
+                            </a>
+                        {% endwith %}
+                    {% endif %}
+                    
                 </div>
             </div>
             
@@ -115,7 +263,7 @@
                     <h6>Modes de paiement acceptés</h6>
                     <div class="d-flex flex-wrap gap-2 mt-3">
                         <span class="badge bg-primary">MTN Mobile Money</span>
-                        <span class="badge bg-warning text-dark">Orange Money</span>
+                        <span class="badge bg-warning">Orange Money</span>
                         <span class="badge bg-success">Paiement à la livraison</span>
                         <span class="badge bg-info">Paiement en boutique</span>
                     </div>

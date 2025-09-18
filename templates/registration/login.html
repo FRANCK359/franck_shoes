@@ -2,51 +2,177 @@
 
 {% block title %}Connexion - Franck'K Shoes CM{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ======= Container centré avec padding pour navbar ======= */
+.container-login {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 120px; /* pour navbar fixed */
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* ======= Animation d'apparition ======= */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ======= Card ======= */
+.card {
+    border-radius: 15px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* Card Header */
+.card-header {
+    background: linear-gradient(135deg, #2c3e50, #4b3f72);
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    text-align: center;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: 50px;
+    padding: 0.75rem 1.2rem;
+    border: 1px solid #ced4da;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    border-color: #4b3f72;
+    box-shadow: 0 0 10px rgba(75,63,114,0.3);
+}
+
+/* Bouton */
+.btn-primary {
+    border-radius: 50px;
+    padding: 0.65rem 1.5rem;
+    background: linear-gradient(135deg, #4b3f72, #b03a2e);
+    border: none;
+    font-weight: 600;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(176,58,46,0.4);
+}
+
+/* Liens */
+.text-center a {
+    color: #4b3f72;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.text-center a:hover {
+    text-decoration: underline;
+}
+
+/* Password toggle amélioré et bien centré */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 3rem; /* espace pour le bouton */
+}
+
+.password-wrapper .toggle-password-btn {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    background: rgba(75,63,114,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    color: #4b3f72;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+}
+
+.password-wrapper .toggle-password-btn:hover {
+    background: rgba(75,63,114,0.2);
+    color: #b03a2e;
+}
+
+/* Ajustement pour le label */
+.password-wrapper label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .container-login { padding-top: 80px; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<div class="container-login">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-6 col-lg-5">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
+                <div class="card-header">
                     <h3>Connexion</h3>
                 </div>
                 <div class="card-body">
-                    
                     <form method="post">
                         {% csrf_token %}
-                        
-                        <!-- erreurs globales du formulaire -->
+
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger">
                                 {{ form.non_field_errors }}
                             </div>
                         {% endif %}
-                        
+
                         <div class="mb-3">
                             <label for="id_username" class="form-label">Nom d'utilisateur</label>
-                            {{ form.username }}
+                            <input type="text" name="username" id="id_username" class="form-control" value="{{ form.username.value|default_if_none:'' }}">
                             {% if form.username.errors %}
-                                <div class="text-danger small">
-                                    {{ form.username.errors }}
-                                </div>
+                                <div class="text-danger small">{{ form.username.errors }}</div>
                             {% endif %}
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="id_password" class="form-label">Mot de passe</label>
-                            {{ form.password }}
+
+                        <div class="mb-3 password-wrapper">
+                            <label for="password-field" class="form-label">Mot de passe</label>
+                            <input type="password" name="password" id="password-field" class="form-control">
+                            <button type="button" class="toggle-password-btn" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
                             {% if form.password.errors %}
-                                <div class="text-danger small">
-                                    {{ form.password.errors }}
-                                </div>
+                                <div class="text-danger small">{{ form.password.errors }}</div>
                             {% endif %}
                         </div>
-                        
+
                         <button type="submit" class="btn btn-primary w-100">Se connecter</button>
                     </form>
-                    
+
                     <hr>
-                    
+
                     <div class="text-center">
                         <p>Pas encore de compte ? <a href="{% url 'register' %}">Créer un compte</a></p>
                         <p><a href="{% url 'password_reset' %}">Mot de passe oublié ?</a></p>
@@ -56,4 +182,28 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordField = document.querySelector('#password-field');
+
+    togglePassword.addEventListener('click', function () {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        
+        // Changer l'icône
+        const icon = this.querySelector('i');
+        if (type === 'text') {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+});
+</script>
 {% endblock %}

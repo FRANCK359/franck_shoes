@@ -1,387 +1,22 @@
 {% extends 'base.html' %}
+{% load static %} 
 
 {% block title %}Accueil - Franck'K Shoes CM{% endblock %}
 
 {% block extra_css %}
-
-<style>
-/* ================= Hero Section ================= */
-.hero-section {
-    position: relative;
-    height: 80vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #111;
-}
-
-.slideshow-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-
-.slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    background-size: cover;
-    background-position: center;
-    transition: opacity 1.2s ease-in-out, transform 1.2s ease;
-    transform: scale(1.1);
-    filter: brightness(0.7);
-}
-
-.slide.active {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.hero-section::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-/* ================= Hero Section ================= */
-.hero-section {
-    position: relative;
-    height: 80vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #111; /* fond sombre */
-}
-
-.slideshow-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-
-.slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    background-size: cover;
-    background-position: center;
-    transition: opacity 1.2s ease-in-out, transform 1.2s ease;
-    transform: scale(1.1);
-    filter: brightness(0.7);
-}
-
-.slide.active {
-    opacity: 1;
-    transform: scale(1);
-}
-
-/* Overlay dégradé pour lisibilité du texte */
-.hero-section::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
-    z-index: 1;
-}
-
-/* Hero Content */
-.hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: left;
-    color: #fff;
-    max-width: 650px;
-    padding: 2.5rem 2rem;
-    border-radius: 15px;
-    animation: heroFade 1s ease-out forwards;
-}
-
-/* ================= Texte 3D ================= */
-.hero-content h1 {
-    font-size: 3rem;
-    font-weight: 900;
-    line-height: 1.2;
-    margin-bottom: 1rem;
-    letter-spacing: 1px;
-    color: #ff4d4d; /* couleur vive */
-    text-shadow: 
-        1px 1px 0 #000,
-        2px 2px 0 #222,
-        3px 3px 0 #444,
-        4px 4px 0 #666,
-        5px 5px 10px rgba(0,0,0,0.5);
-    transform: rotateX(5deg) rotateY(-2deg);
-    transition: transform 0.5s ease, text-shadow 0.5s ease;
-}
-
-.hero-content h1:hover {
-    transform: rotateX(0deg) rotateY(0deg) scale(1.05);
-    text-shadow: 
-        2px 2px 0 #000,
-        4px 4px 0 #222,
-        6px 6px 0 #444,
-        8px 8px 0 #666,
-        10px 10px 15px rgba(0,0,0,0.6);
-}
-
-/* ================= Texte secondaire ================= */
-.hero-content p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    text-shadow: 1px 1px 8px rgba(0,0,0,0.5);
-}
-
-/* ================= Boutons ================= */
-.hero-content .btn {
-    background: linear-gradient(90deg, #ff4d4d, #ff9900);
-    border: none;
-    padding: 0.8rem 2rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #fff;
-    border-radius: 50px;
-    box-shadow: 0 5px 20px rgba(255, 153, 0, 0.4);
-    transition: all 0.3s ease;
-    margin-right: 1rem;
-}
-
-.hero-content .btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 30px rgba(255, 153, 0, 0.6);
-}
-
-/* ================= Animation ================= */
-@keyframes heroFade {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-/* ================= Responsive ================= */
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2.2rem;
-    }
-    .hero-content p {
-        font-size: 1rem;
-    }
-    .hero-content {
-        padding: 2rem 1rem;
-    }
-}
-
-
-/* ================= Featured Products ================= */
-.featured-products .card {
-    border-radius: 20px;
-    overflow: hidden;
-    transition: transform 0.5s ease, box-shadow 0.5s ease;
-    background: linear-gradient(145deg, #fff, #ffece0);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.featured-products .card:hover {
-    transform: translateY(-12px) rotateX(2deg);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-}
-
-.featured-products .card img {
-    transition: transform 0.5s ease, filter 0.5s ease;
-    border-bottom: 2px solid #ff4d4d;
-}
-
-.featured-products .card:hover img {
-    transform: scale(1.08) rotateZ(1deg);
-    filter: brightness(1.1);
-}
-
-/* ================= Categories ================= */
-.categories {
-    background: #f4f4f9;
-    padding: 6rem 0;
-}
-
-.categories h2 {
-    font-size: 2.8rem;
-    font-weight: 800;
-    margin-bottom: 3rem;
-    text-align: center;
-    color: #222;
-    position: relative;
-}
-
-.categories h2::after {
-    content: "";
-    display: block;
-    width: 100px;
-    height: 5px;
-    background: linear-gradient(90deg, #ff4d4d, #ff9900);
-    margin: 15px auto 0;
-    border-radius: 3px;
-}
-
-.category-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: transform 0.5s ease, box-shadow 0.5s ease;
-    background: #fff;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-.category-card:hover {
-    transform: translateY(-15px) rotateX(3deg);
-    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
-}
-
-.category-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -60%;
-    width: 220%;
-    height: 100%;
-    background: linear-gradient(120deg, rgba(255,77,77,0.15), rgba(255,153,0,0.15));
-    transform: skewX(-25deg) translateX(-100%);
-    transition: transform 0.8s ease;
-    pointer-events: none;
-}
-
-.category-card:hover::before {
-    transform: skewX(-25deg) translateX(0);
-}
-
-.category-card .card-body {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 2.5rem 1.5rem;
-}
-
-.category-card .card-title {
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin-bottom: 0.7rem;
-    color: #ff4d4d;
-    text-transform: uppercase;
-}
-
-.category-card .card-text {
-    font-size: 1.05rem;
-    color: #555;
-    margin-bottom: 1.8rem;
-}
-
-.category-card .btn {
-    background: linear-gradient(90deg, #ff4d4d, #ff9900);
-    border: none;
-    color: #fff;
-    padding: 0.7rem 1.6rem;
-    border-radius: 50px;
-    font-weight: 600;
-    transition: all 0.4s ease;
-}
-
-.category-card .btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 10px 30px rgba(255,153,0,0.5);
-}
-
-/* ================= Features ================= */
-.feature-item {
-    padding: 30px;
-    background: linear-gradient(145deg, #fff3e6, #fff9f2);
-    border-radius: 20px;
-    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
-}
-
-.feature-item:hover {
-    transform: translateY(-8px) rotateX(2deg);
-    background: linear-gradient(145deg, #ffe6d6, #fff3e6);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-}
-
-.feature-item i {
-    color: #ff4d4d;
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    transition: transform 0.4s ease;
-}
-
-.feature-item:hover i {
-    transform: scale(1.2) rotateZ(10deg);
-}
-
-/* ================= Testimonials ================= */
-.testimonials .card {
-    border-left: 6px solid #ff4d4d;
-    border-radius: 15px;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    background: #fff;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.testimonials .card:hover {
-    transform: translateX(8px) rotateY(2deg);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-}
-
-.testimonials i {
-    color: #ffc107;
-    transition: transform 0.4s ease;
-}
-
-.testimonials .card:hover i {
-    transform: scale(1.2) rotateZ(10deg);
-}
-
-/* ================= Animations ================= */
-@keyframes heroFade {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-/* ================= Responsive ================= */
-@media (max-width: 992px) {
-    .featured-products .card img { height: 220px; object-fit: cover; }
-    .category-card .card-body { padding: 2rem 1rem; }
-    .feature-item { padding: 20px; }
-}
-
-@media (max-width: 576px) {
-    .hero-content h1 { font-size: 2rem; }
-    .hero-content p { font-size: 1rem; }
-}
-
-
-</style>
+<!-- CSS externalisé pour plus de clarté -->
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 
 {% block content %}
+
 <!-- Hero Section avec diaporama -->
-<section class="hero-section py-5">
+<section class="hero-section py-5" aria-label="Diaporama de présentation">
     <div class="slideshow-container">
-        <div class="slide active" style="background-image: url('/static/images/slide1.jpeg');"></div>
-        <div class="slide" style="background-image: url('/static/images/slide2.jpeg');"></div>
-        <div class="slide" style="background-image: url('/static/images/slide3.jpg');"></div>
-        <div class="slide" style="background-image: url('/static/images/slide4.jpg');"></div>
+        <div class="slide active" style="background-image: url('/static/images/slide1.jpeg');" aria-hidden="false"></div>
+        <div class="slide" style="background-image: url('/static/images/slide2.jpeg');" aria-hidden="true"></div>
+        <div class="slide" style="background-image: url('/static/images/slide3.jpg');" aria-hidden="true"></div>
+        <div class="slide" style="background-image: url('/static/images/slide4.jpg');" aria-hidden="true"></div>
     </div>
     
     <div class="container h-100">
@@ -390,7 +25,7 @@
                 <div class="hero-content">
                     <h1 class="display-4 fw-bold">Des chaussures de qualité à prix imbattables</h1>
                     <p class="lead">Découvrez notre collection de chaussures importées directement de Chine. Livraison dans tout le Cameroun.</p>
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="hero-buttons">
                         <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Découvrir la boutique</a>
                         <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-lg">Nous contacter</a>
                     </div>
@@ -398,24 +33,44 @@
             </div>
         </div>
     </div>
+    
+    <!-- Indicateurs de slides -->
+    <div class="slide-indicators" aria-label="Contrôle du diaporama">
+        <button class="slide-indicator active" aria-label="Afficher la slide 1" aria-current="true"></button>
+        <button class="slide-indicator" aria-label="Afficher la slide 2"></button>
+        <button class="slide-indicator" aria-label="Afficher la slide 3"></button>
+        <button class="slide-indicator" aria-label="Afficher la slide 4"></button>
+    </div>
+</section>
+
+<!-- Livraison & Expédition -->
+<section class="delivery-info py-3 text-white text-center" aria-label="Informations de livraison">
+    <div class="container">
+        <p class="fw-bold mb-0">
+            <i class="fas fa-truck me-2" aria-hidden="true"></i>
+            Livraison disponible dans la ville de <strong>Douala</strong> et expéditions vers toutes les autres villes. 
+            Les frais de livraison dépendent du quartier et les frais d'expédition dépendent de la quantité achetée et de la ville. 
+            <strong>Livraison gratuite pour tout achat ≥ 50 000 FCFA</strong>!
+        </p>
+    </div>
 </section>
 
 <!-- Featured Products -->
-<section class="featured-products py-5">
+<section class="featured-products py-5" aria-label="Produits populaires">
     <div class="container">
         <h2 class="text-center mb-5">Produits populaires</h2>
         <div class="row">
             {% for shoe in featured_shoes %}
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="{{ shoe.image.url }}" class="card-img-top" alt="{{ shoe.name }}" style="height: 250px; object-fit: cover;">
+                    <img src="{{ shoe.image.url }}" class="card-img-top" alt="{{ shoe.name }}" loading="lazy" width="300" height="250">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">{{ shoe.name }}</h5>
+                        <h3 class="card-title h5">{{ shoe.name }}</h3>
                         <p class="card-text text-primary fw-bold">{{ shoe.price }} FCFA</p>
                         <div class="mt-auto d-flex justify-content-between align-items-center">
                             <a href="{% url 'product_detail' shoe.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
-                            <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}">
-                                <i class="fas fa-cart-plus"></i>
+                            <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}" aria-label="Ajouter {{ shoe.name }} au panier">
+                                <i class="fas fa-cart-plus" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -434,7 +89,7 @@
 </section>
 
 <!-- Categories -->
-<section class="categories py-5 bg-light">
+<section class="categories py-5 bg-light" aria-label="Catégories de produits">
     <div class="container">
         <h2 class="text-center mb-5">Nos catégories</h2>
         <div class="row">
@@ -442,7 +97,7 @@
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card category-card h-100 shadow-sm">
                     <div class="card-body text-center">
-                        <h5 class="card-title">{{ category.name }}</h5>
+                        <h3 class="card-title h5">{{ category.name }}</h3>
                         <p class="card-text">{{ category.description }}</p>
                         <a href="{% url 'product_list' %}?category={{ category.id }}" class="btn btn-primary">Voir les produits</a>
                     </div>
@@ -458,27 +113,27 @@
 </section>
 
 <!-- Features -->
-<section class="features py-5">
+<section class="features py-5" aria-label="Nos services">
     <div class="container">
         <div class="row text-center">
             <div class="col-md-4 mb-4">
                 <div class="feature-item">
-                    <i class="fas fa-truck fa-3x text-primary mb-3"></i>
-                    <h4>Livraison rapide</h4>
+                    <i class="fas fa-truck fa-3x text-primary mb-3" aria-hidden="true"></i>
+                    <h3>Livraison rapide</h3>
                     <p>Livraison dans toutes les villes du Cameroun</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="feature-item">
-                    <i class="fas fa-money-bill-wave fa-3x text-primary mb-3"></i>
-                    <h4>Paiement sécurisé</h4>
+                    <i class="fas fa-money-bill-wave fa-3x text-primary mb-3" aria-hidden="true"></i>
+                    <h3>Paiement sécurisé</h3>
                     <p>MTN Money, Orange Money et paiement à la livraison</p>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="feature-item">
-                    <i class="fas fa-headset fa-3x text-primary mb-3"></i>
-                    <h4>Support client</h4>
+                    <i class="fas fa-headset fa-3x text-primary mb-3" aria-hidden="true"></i>
+                    <h3>Support client</h3>
                     <p>Assistance 7j/7 par téléphone et WhatsApp</p>
                 </div>
             </div>
@@ -487,7 +142,7 @@
 </section>
 
 <!-- Testimonials -->
-<section class="testimonials py-5 bg-light">
+<section class="testimonials py-5 bg-light" aria-label="Témoignages clients">
     <div class="container">
         <h2 class="text-center mb-5">Ce que disent nos clients</h2>
         <div class="row">
@@ -495,15 +150,17 @@
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-body text-center">
-                        <div class="mb-3">
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
-                            <i class="fas fa-star text-warning"></i>
+                        <div class="mb-3" aria-label="5 étoiles sur 5">
+                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
+                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
+                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
+                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
+                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
                         </div>
-                        <p class="card-text fst-italic">"{{ msg.message }}"</p>
-                        <p class="text-muted mt-3">- {{ msg.name }} de {{ msg.city }}</p>
+                        <blockquote>
+                            <p class="card-text fst-italic">"{{ msg.message }}"</p>
+                            <footer class="text-muted mt-3">- {{ msg.name }} de {{ msg.city }}</footer>
+                        </blockquote>
                     </div>
                 </div>
             </div>
@@ -519,94 +176,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Gestion du diaporama
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const slideCount = slides.length;
-    
-    function showSlide(n) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        slides[n].classList.add('active');
-    }
-    
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % slideCount;
-        showSlide(currentSlide);
-    }
-    
-    // Changer d'image toutes les 5 secondes
-    setInterval(nextSlide, 5000);
-    
-    // Gestion de l'ajout au panier
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', function() {
-            const shoeId = this.getAttribute('data-shoe-id');
-            // Pour les produits vedettes, on utilise des valeurs par défaut
-            addToCart(shoeId, 38, 'Noir', 1);
-        });
-    });
-    
-    function addToCart(shoeId, size, color, quantity) {
-        fetch(`/panier/ajouter/${shoeId}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({
-                size: size,
-                color: color,
-                quantity: quantity
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Mettre à jour le compteur du panier
-                document.querySelectorAll('.cart-count').forEach(span => {
-                    span.textContent = data.cart_count;
-                });
-                
-                // Afficher une notification
-                showAlert('Produit ajouté au panier!', 'success');
-            }
-        });
-    }
-    
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-    function showAlert(message, type) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-        alertDiv.style.top = '20px';
-        alertDiv.style.right = '20px';
-        alertDiv.style.zIndex = '9999';
-        alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.appendChild(alertDiv);
-        
-        // Supprimer l'alerte après 3 secondes
-        setTimeout(() => {
-            alertDiv.remove();
-        }, 3000);
-    }
-});
-</script>
+<!-- JavaScript externalisé pour plus de clarté -->
+<script src="{% static 'js/home.js' %}"></script>
 {% endblock %}

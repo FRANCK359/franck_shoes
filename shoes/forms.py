@@ -61,18 +61,34 @@ class OrderForm(forms.ModelForm):
     
     class Meta:
         model = Order
-        fields = ['shipping_address', 'city', 'phone_number', 'payment_method', 'notes']
+        fields = [
+            'shipping_address', 
+            'city', 
+            'phone_number', 
+            'payment_method', 
+            'notes',
+            'payment_confirmation_message',  # Champ pour coller le message reçu après paiement
+        ]
         widgets = {
-            'shipping_address': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Votre adresse complète'}),
-            'notes': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Notes supplémentaires pour la livraison'}),
+            'shipping_address': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Votre adresse complète'
+            }),
+            'notes': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Notes supplémentaires pour la livraison'
+            }),
+            'payment_confirmation_message': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Copiez ici le message reçu après paiement MTN ou Orange'
+            }),
         }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Appliquer la classe Bootstrap à tous les champs
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
-
-
 from .models import ContactMessage
 
 class ContactForm(forms.ModelForm):

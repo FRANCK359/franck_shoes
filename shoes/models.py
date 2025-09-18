@@ -49,7 +49,7 @@ class Shoe(models.Model):
         verbose_name="Pointure maximale"
     )
     stock = models.PositiveIntegerField(default=0, verbose_name="Stock")
-    image = CloudinaryField( folder='shoes', verbose_name="Image")
+    image = CloudinaryField(folder='shoes', verbose_name="Image")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Date de modification")
     featured = models.BooleanField(default=False, verbose_name="En vedette")
@@ -134,15 +134,25 @@ class Order(models.Model):
     
     customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Client")
     items = models.ManyToManyField(Shoe, through='OrderItem', verbose_name="Articles")
+
+    # ✅ Nouveau champ frais de livraison
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Frais de livraison")
+
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Montant total")
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, verbose_name="Méthode de paiement")
     status = models.CharField(max_length=10, choices=ORDER_STATUS, default='PENDING', verbose_name="Statut")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Date de modification")
     shipping_address = models.TextField(verbose_name="Adresse de livraison")
     city = models.CharField(max_length=100, verbose_name="Ville")
     phone_number = models.CharField(max_length=20, verbose_name="Numéro de téléphone")
     notes = models.TextField(blank=True, verbose_name="Notes")
+    payment_confirmation_message = models.TextField(
+        blank=True, 
+        verbose_name="Message de confirmation de paiement",
+        help_text="Collez ici le message reçu après paiement via MTN ou Orange Money"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Date de modification")
     
     class Meta:
         verbose_name = "Commande"
@@ -151,6 +161,11 @@ class Order(models.Model):
     
     def __str__(self):
         return f"Commande #{self.id} - {self.customer.username}"
+
+    # ✅ méthode utile pour le total avec livraison
+    def get_total_with_shipping(self):
+        return self.total_amount + self.shipping_cost
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Commande")
@@ -169,8 +184,6 @@ class OrderItem(models.Model):
     
     def get_total(self):
         return self.quantity * self.price
-    
-from django.db import models
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)

@@ -1,52 +1,148 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block title %}Panier - Franck'K Shoes CM{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ================= Panier Styles ================= */
+h1.display-5 {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b) !important;
+    color: #fff;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff4b4b, #1a1a1a);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255,75,75,0.6);
+}
+
+.btn-outline-primary {
+    color: #4fc3ff;
+    border: 2px solid #4fc3ff;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: #4fc3ff;
+    color: #1a1a1a;
+}
+
+.btn-sm.btn-outline-secondary {
+    border-color: #4fc3ff;
+    color: #4fc3ff;
+}
+
+.btn-sm.btn-outline-secondary:hover {
+    background: #4fc3ff;
+    color: #fff;
+}
+
+.text-primary {
+    color: #4fc3ff !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.progress-bar.bg-info {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b);
+}
+
+.badge.bg-success {
+    background: #28a745 !important;
+    color: #fff;
+}
+
+/* Images du panier */
+.img-fluid {
+    max-height: 150px;
+    border-radius: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    .card-body { padding: 1rem; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
-    <h1 class="mb-4 text-center">🛒 Votre panier</h1>
-    
+    <h1 class="mb-5 text-center display-5 fw-bold">🛒 Votre panier</h1>
+
     {% if cart %}
     <div class="row g-4">
         <!-- Liste des articles -->
         <div class="col-12 col-md-8">
-            <div class="card shadow-sm rounded-4">
+            <div class="card shadow-lg rounded-4 border-0">
                 <div class="card-body">
                     {% for item in cart %}
                     <div class="row align-items-center mb-4 pb-3 border-bottom">
                         <!-- Image -->
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
-                            <img src="{{ item.shoe.image.url }}" alt="{{ item.shoe.name }}" class="img-fluid rounded" style="max-height:150px;">
+                            <img src="{{ item.shoe.image.url }}" alt="{{ item.shoe.name }}" 
+                                 class="img-fluid rounded shadow-sm">
                         </div>
                         <!-- Détails -->
                         <div class="col-12 col-md-6 text-center text-md-start mb-2 mb-md-0">
-                            <h5>{{ item.shoe.name }}</h5>
+                            <h5 class="fw-semibold">{{ item.shoe.name }}</h5>
                             <p class="text-muted small">Pointure: {{ item.size }} | Couleur: {{ item.color }}</p>
-                            <p class="text-primary fw-bold">{{ item.price }} FCFA</p>
+                            <p class="text-primary fw-bold fs-5">{{ item.price }} FCFA</p>
                         </div>
                         <!-- Actions -->
                         <div class="col-12 col-md-3 d-flex flex-column align-items-center align-items-md-end gap-2">
                             <div class="btn-group mb-2" role="group">
-                                <button class="btn btn-sm btn-outline-secondary update-quantity" data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}" data-action="decrease">-</button>
+                                <button class="btn btn-sm btn-outline-secondary update-quantity" 
+                                        data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" 
+                                        data-color="{{ item.color }}" data-action="decrease">-</button>
                                 <span class="btn btn-sm btn-light disabled">{{ item.quantity }}</span>
-                                <button class="btn btn-sm btn-outline-secondary update-quantity" data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}" data-action="increase">+</button>
+                                <button class="btn btn-sm btn-outline-secondary update-quantity" 
+                                        data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" 
+                                        data-color="{{ item.color }}" data-action="increase">+</button>
                             </div>
-                            <p class="fw-bold mb-0">{{ item.total_price }} FCFA</p>
-                            <button class="btn btn-sm btn-danger remove-item" data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}">
+                            <p class="fw-bold mb-1">{{ item.total_price }} FCFA</p>
+                            <button class="btn btn-sm btn-danger remove-item" 
+                                    data-shoe-id="{{ item.shoe.id }}" data-size="{{ item.size }}" 
+                                    data-color="{{ item.color }}">
                                 <i class="fas fa-trash"></i> Retirer
                             </button>
                         </div>
                     </div>
-                    {% empty %}
-                    <p class="text-center text-muted">Aucun article dans le panier.</p>
                     {% endfor %}
                 </div>
             </div>
         </div>
-        
+
         <!-- Récapitulatif -->
         <div class="col-12 col-md-4">
-            <div class="card shadow-sm rounded-4">
+            <div class="card shadow-lg rounded-4 border-0">
                 <div class="card-header bg-primary text-white text-center text-md-start">
                     <h5 class="mb-0">Récapitulatif</h5>
                 </div>
@@ -62,49 +158,48 @@
                             {% if total >= 50000 %}
                             <span class="badge bg-success">Gratuite</span>
                             {% else %}
-                            5 000 FCFA
+                            2 000 FCFA
                             {% endif %}
                         </span>
                     </div>
                     <hr>
-                    <div class="d-flex justify-content-between mb-3 fs-5">
+                    <div class="d-flex justify-content-between mb-3 fs-5 fw-bold">
                         <strong>Total</strong>
                         <strong>
                             {% if total >= 50000 %}
                                 {{ total }} FCFA
                             {% else %}
-                                {{ total|add:"5000" }} FCFA
+                                {{ total|add:2000 }} FCFA
                             {% endif %}
                         </strong>
                     </div>
-                    <a href="{% url 'checkout' %}" class="btn btn-lg btn-primary w-100 mb-2">
-                        <i class="fas fa-credit-card"></i> Passer la commande
+                    <a href="{% url 'checkout' %}" class="btn btn-lg btn-primary w-100 mb-2 shadow-sm">
+                        <i class="fas fa-credit-card me-2"></i> Passer la commande
                     </a>
-                    <a href="{% url 'product_list' %}" class="btn btn-outline-primary w-100">
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-primary w-100 shadow-sm">
                         Continuer mes achats
                     </a>
                     {% endwith %}
                 </div>
             </div>
-            
+
             <!-- Livraison gratuite -->
-            <div class="card shadow-sm rounded-4 mt-4">
+            <div class="card shadow-lg rounded-4 border-0 mt-4">
                 <div class="card-body text-center text-md-start">
                     <h6 class="fw-bold">🎁 Livraison offerte</h6>
                     <p class="small text-muted">Livraison gratuite à partir de 50 000 FCFA.</p>
-                    {% with remaining=50000|add:"-"|add:cart.get_total_price %}
-                    <div class="progress mb-2">
-                        <div class="progress-bar bg-info" role="progressbar" 
-                             style="width: {% widthratio cart.get_total_price 50000 100 %}%;" 
-                             aria-valuenow="{{ cart.get_total_price }}" 
-                             aria-valuemin="0" aria-valuemax="50000">
-                        </div>
+                    {% with total_price=cart.get_total_price %}
+                    <div class="progress mb-2 rounded-pill" style="height:10px;">
+                        <div class="progress-bar bg-info rounded-pill" role="progressbar" 
+                             style="width: {% widthratio total_price 50000 100 %}%;" 
+                             aria-valuenow="{{ total_price }}" 
+                             aria-valuemin="0" aria-valuemax="50000"></div>
                     </div>
-                    <p class="small text-muted">
-                        {% if cart.get_total_price >= 50000 %}
+                    <p class="small text-muted mb-0">
+                        {% if total_price >= 50000 %}
                             ✅ Félicitations ! Livraison gratuite activée.
                         {% else %}
-                            Il manque <strong>{{ remaining }} FCFA</strong> pour la livraison gratuite.
+                            Il manque <strong>{{ 50000|subtract:total_price }} FCFA</strong> pour la livraison gratuite.
                         {% endif %}
                     </p>
                     {% endwith %}
@@ -114,10 +209,10 @@
     </div>
     {% else %}
     <div class="text-center py-5">
-        <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
-        <h3>Votre panier est vide</h3>
-        <p class="text-muted">Parcourez nos collections et trouvez vos chaussures idéales.</p>
-        <a href="{% url 'product_list' %}" class="btn btn-lg btn-primary">Découvrir la boutique</a>
+        <i class="fas fa-shopping-cart fa-6x text-muted mb-4"></i>
+        <h3 class="mb-3">Votre panier est vide</h3>
+        <p class="text-muted mb-4">Parcourez nos collections et trouvez vos chaussures idéales.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-lg btn-primary shadow-sm">Découvrir la boutique</a>
     </div>
     {% endif %}
 </div>

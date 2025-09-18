@@ -2,53 +2,203 @@
 
 {% block title %}Inscription - Franck'K Shoes CM{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ======= Container centré avec padding pour navbar ======= */
+.container-register {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 120px; /* pour navbar fixed */
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ======= Card ======= */
+.card {
+    border-radius: 15px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* Card Header */
+.card-header {
+    background: linear-gradient(135deg, #2c3e50, #4b3f72);
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    text-align: center;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: 50px;
+    padding: 0.75rem 1.2rem;
+    border: 1px solid #ced4da;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.form-control:focus {
+    border-color: #4b3f72;
+    box-shadow: 0 0 10px rgba(75,63,114,0.3);
+}
+
+/* Bouton */
+.btn-primary {
+    border-radius: 50px;
+    padding: 0.65rem 1.5rem;
+    background: linear-gradient(135deg, #4b3f72, #b03a2e);
+    border: none;
+    font-weight: 600;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(176,58,46,0.4);
+}
+
+/* Liens */
+.text-center a {
+    color: #4b3f72;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.text-center a:hover {
+    text-decoration: underline;
+}
+
+/* Password toggle */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 3rem; /* espace pour le bouton */
+    height: 3rem;
+}
+
+.password-wrapper .toggle-password-btn {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+    margin: auto;
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    background: rgba(75,63,114,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    color: #4b3f72;
+    font-size: 1rem;
+}
+
+.password-wrapper .toggle-password-btn:hover {
+    background: rgba(75,63,114,0.2);
+    color: #b03a2e;
+}
+
+/* Responsive : une colonne sur mobile */
+@media (max-width: 767.98px) {
+    .row.g-3 > .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+<div class="container-register">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-8 col-lg-6">
             <div class="card shadow-sm">
-                <div class="card-header text-center bg-primary text-white">
+                <div class="card-header">
                     <h3>Créer un compte</h3>
                 </div>
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.non_field_errors }}
-                        
-                        <div class="mb-3">
-                            <label for="id_username" class="form-label">Nom d'utilisateur</label>
-                            {{ form.username }}
-                            {{ form.username.errors }}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                        {% endif %}
+
+                        <!-- Nom et Email sur la même ligne -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                                <input type="text" name="username" id="id_username" class="form-control" value="{{ form.username.value|default_if_none:'' }}">
+                                {% if form.username.errors %}
+                                    <div class="text-danger small">{{ form.username.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_email" class="form-label">Email</label>
+                                <input type="email" name="email" id="id_email" class="form-control" value="{{ form.email.value|default_if_none:'' }}">
+                                {% if form.email.errors %}
+                                    <div class="text-danger small">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="id_email" class="form-label">Email</label>
-                            {{ form.email }}
-                            {{ form.email.errors }}
-                        </div>
-
-                        <div class="mb-3">
+                        <!-- Mot de passe et confirmation -->
+                        <div class="mb-3 password-wrapper">
                             <label for="id_password1" class="form-label">Mot de passe</label>
-                            {{ form.password1 }}
-                            {{ form.password1.errors }}
+                            <input type="password" name="password1" id="password1-field" class="form-control">
+                            <div class="toggle-password-btn" data-target="password1-field">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="text-danger small">{{ form.password1.errors }}</div>
+                            {% endif %}
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 password-wrapper">
                             <label for="id_password2" class="form-label">Confirmation du mot de passe</label>
-                            {{ form.password2 }}
-                            {{ form.password2.errors }}
+                            <input type="password" name="password2" id="password2-field" class="form-control">
+                            <div class="toggle-password-btn" data-target="password2-field">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            {% if form.password2.errors %}
+                                <div class="text-danger small">{{ form.password2.errors }}</div>
+                            {% endif %}
                         </div>
 
-                        <div class="mb-3">
-                            <label for="id_phone_number" class="form-label">Numéro de téléphone</label>
-                            {{ form.phone_number }}
-                            {{ form.phone_number.errors }}
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="id_city" class="form-label">Ville</label>
-                            {{ form.city }}
-                            {{ form.city.errors }}
+                        <!-- Ville et Numéro sur la même ligne -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="id_city" class="form-label">Ville</label>
+                                <input type="text" name="city" id="id_city" class="form-control" value="{{ form.city.value|default_if_none:'' }}">
+                                {% if form.city.errors %}
+                                    <div class="text-danger small">{{ form.city.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_phone_number" class="form-label">Numéro de téléphone</label>
+                                <input type="text" name="phone_number" id="id_phone_number" class="form-control" value="{{ form.phone_number.value|default_if_none:'' }}">
+                                {% if form.phone_number.errors %}
+                                    <div class="text-danger small">{{ form.phone_number.errors }}</div>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
@@ -61,4 +211,28 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.toggle-password-btn');
+
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

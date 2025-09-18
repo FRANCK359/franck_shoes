@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'shoes',  # ton app principale
     'cloudinary',
     'cloudinary_storage',
+    'widget_tweaks',
 ]
 
 # -------------------------
