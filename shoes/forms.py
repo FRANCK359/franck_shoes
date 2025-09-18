@@ -1,12 +1,21 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Order
+from .models import UserProfile, Order, ContactMessage
 
+# ==========================
+# Formulaire d'inscription
+# ==========================
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
     phone_number = forms.CharField(max_length=20, required=False)
-    city = forms.ChoiceField(choices=UserProfile.CITIES, required=False)
+    city = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre ville'
+        })
+    )
     
     class Meta:
         model = User
@@ -18,8 +27,7 @@ class UserRegistrationForm(UserCreationForm):
         
         if commit:
             user.save()
-            
-            # ✅ Crée le profile explicitement
+            # Crée le profil utilisateur
             UserProfile.objects.create(
                 user=user,
                 phone_number=self.cleaned_data.get('phone_number', ''),
@@ -28,36 +36,39 @@ class UserRegistrationForm(UserCreationForm):
         
         return user
 
-
+# ==========================
+# Formulaire de profil utilisateur
+# ==========================
 class UserProfileForm(forms.ModelForm):
+    city = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre ville'
+        })
+    )
+
     class Meta:
         model = UserProfile
         fields = ['phone_number', 'city', 'address', 'date_of_birth', 'profile_picture']
         widgets = {
-            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
-            'address': forms.Textarea(attrs={'rows': 3}),
+            'date_of_birth': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'profile_picture': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
+# ==========================
+# Formulaire de commande
+# ==========================
 class OrderForm(forms.ModelForm):
-    CITIES = [
-        ('DOUALA', 'Douala'),
-        ('YAOUNDE', 'Yaoundé'),
-        ('GAROUA', 'Garoua'),
-        ('BAMENDA', 'Bamenda'),
-        ('MAROUA', 'Maroua'),
-        ('NKOUNGSAMBA', 'Nkongsamba'),
-        ('BAFOUSSAM', 'Bafoussam'),
-        ('NGAOUNDERE', 'Ngaoundéré'),
-        ('BERTOUA', 'Bertoua'),
-        ('LIMBE', 'Limbé'),
-        ('EDEA', 'Edéa'),
-        ('KUMBA', 'Kumba'),
-        ('MBALMAYO', 'Mbalmayo'),
-        ('DSCHANG', 'Dschang'),
-        ('FOUMBAN', 'Foumban'),
-    ]
-    
-    city = forms.ChoiceField(choices=CITIES, required=True)
+    city = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre ville'
+        })
+    )
     
     class Meta:
         model = Order
@@ -67,30 +78,36 @@ class OrderForm(forms.ModelForm):
             'phone_number', 
             'payment_method', 
             'notes',
-            'payment_confirmation_message',  # Champ pour coller le message reçu après paiement
+            'payment_confirmation_message',
         ]
         widgets = {
             'shipping_address': forms.Textarea(attrs={
                 'rows': 3,
-                'placeholder': 'Votre adresse complète'
+                'placeholder': 'Votre adresse complète',
+                'class': 'form-control'
             }),
             'notes': forms.Textarea(attrs={
                 'rows': 3,
-                'placeholder': 'Notes supplémentaires pour la livraison'
+                'placeholder': 'Notes supplémentaires pour la livraison',
+                'class': 'form-control'
             }),
             'payment_confirmation_message': forms.Textarea(attrs={
                 'rows': 3,
-                'placeholder': 'Copiez ici le message reçu après paiement MTN ou Orange'
+                'placeholder': 'Copiez ici le message reçu après paiement MTN ou Orange',
+                'class': 'form-control'
             }),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Appliquer la classe Bootstrap à tous les champs
         for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
-from .models import ContactMessage
+            if 'class' not in self.fields[field].widget.attrs:
+                self.fields[field].widget.attrs.update({'class': 'form-control'})
 
+# ==========================
+# Formulaire de contact / témoignage
+# ==========================
 class ContactForm(forms.ModelForm):
     class Meta:
         model = ContactMessage

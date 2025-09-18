@@ -83,23 +83,62 @@
             {% if page_obj %}
             <div class="row">
                 {% for shoe in page_obj %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="{{ shoe.image.url }}" class="card-img-top" alt="{{ shoe.name }}" style="height: 250px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ shoe.name }}</h5>
-                            <p class="card-text text-muted">{{ shoe.category.name }}</p>
-                            <p class="card-text text-primary fw-bold">{{ shoe.price }} FCFA</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="{% url 'product_detail' shoe.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
-                                <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+<div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+        <!-- Carousel pour chaque chaussure -->
+        <div id="carousel-{{ shoe.id }}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+            {% if shoe.shoe_images.exists %}
+                {% if shoe.shoe_images.count > 1 %}
+                <div class="carousel-indicators">
+                    {% for img in shoe.shoe_images.all %}
+                    <button type="button" data-bs-target="#carousel-{{ shoe.id }}" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                {% endif %}
+
+                <div class="carousel-inner">
+                    {% for img in shoe.shoe_images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ img.image.url }}" class="d-block w-100" alt="{{ shoe.name }}" style="height:250px; object-fit:cover;">
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if shoe.shoe_images.count > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ shoe.id }}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Précédent</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ shoe.id }}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Suivant</span>
+                </button>
+                {% endif %}
+            {% else %}
+            <!-- Si pas d’images supplémentaires -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="{{ shoe.image.url }}" class="d-block w-100" alt="{{ shoe.name }}" style="height:250px; object-fit:cover;">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="card-body">
+            <h5 class="card-title">{{ shoe.name }}</h5>
+            <p class="card-text text-muted">{{ shoe.category.name }}</p>
+            <p class="card-text text-primary fw-bold">{{ shoe.price }} FCFA</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'product_detail' shoe.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
+                <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}">
+                    <i class="fas fa-cart-plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
             </div>
             
             <!-- Pagination -->

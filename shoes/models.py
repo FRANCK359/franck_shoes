@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from cloudinary.models import CloudinaryField
+from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -34,20 +35,14 @@ class Shoe(models.Model):
     ]
     
     name = models.CharField(max_length=200, verbose_name="Nom")
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(blank=True)  # on supprime unique=True
     description = models.TextField(verbose_name="Description")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Prix")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Catégorie")
     main_color = models.CharField(max_length=3, choices=COLORS, verbose_name="Couleur principale")
     available_colors = models.CharField(max_length=100, help_text="Séparer les couleurs par des virgules", verbose_name="Couleurs disponibles")
-    min_size = models.IntegerField(
-        validators=[MinValueValidator(35), MaxValueValidator(50)], 
-        verbose_name="Pointure minimale"
-    )
-    max_size = models.IntegerField(
-        validators=[MinValueValidator(35), MaxValueValidator(50)], 
-        verbose_name="Pointure maximale"
-    )
+    min_size = models.IntegerField(validators=[MinValueValidator(35), MaxValueValidator(50)], verbose_name="Pointure minimale")
+    max_size = models.IntegerField(validators=[MinValueValidator(35), MaxValueValidator(50)], verbose_name="Pointure maximale")
     stock = models.PositiveIntegerField(default=0, verbose_name="Stock")
     image = CloudinaryField(folder='shoes', verbose_name="Image")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
@@ -58,6 +53,17 @@ class Shoe(models.Model):
         verbose_name = "Chaussure"
         verbose_name_plural = "Chaussures"
         ordering = ['-created_at']
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            slug = base_slug
+            num = 1
+            while Shoe.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
     
     def get_available_sizes(self):
         return list(range(self.min_size, self.max_size + 1))
@@ -71,7 +77,17 @@ class Shoe(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('product_detail', kwargs={'shoe_id': self.id})
+class ShoeImage(models.Model):
+    shoe = models.ForeignKey(Shoe, on_delete=models.CASCADE, related_name='shoe_images', verbose_name="Chaussure")
+    image = CloudinaryField(folder='shoes', verbose_name="Image")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
 
+    class Meta:
+        verbose_name = "Image de chaussure"
+        verbose_name_plural = "Images de chaussures"
+
+    def __str__(self):
+        return f"{self.shoe.name} - Image {self.id}"
 class UserProfile(models.Model):
     CITIES = [
         ('DOUALA', 'Douala'),
@@ -134,10 +150,7 @@ class Order(models.Model):
     
     customer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Client")
     items = models.ManyToManyField(Shoe, through='OrderItem', verbose_name="Articles")
-
-    # ✅ Nouveau champ frais de livraison
     shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Frais de livraison")
-
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Montant total")
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, verbose_name="Méthode de paiement")
     status = models.CharField(max_length=10, choices=ORDER_STATUS, default='PENDING', verbose_name="Statut")
@@ -145,12 +158,7 @@ class Order(models.Model):
     city = models.CharField(max_length=100, verbose_name="Ville")
     phone_number = models.CharField(max_length=20, verbose_name="Numéro de téléphone")
     notes = models.TextField(blank=True, verbose_name="Notes")
-    payment_confirmation_message = models.TextField(
-        blank=True, 
-        verbose_name="Message de confirmation de paiement",
-        help_text="Collez ici le message reçu après paiement via MTN ou Orange Money"
-    )
-    
+    payment_confirmation_message = models.TextField(blank=True, verbose_name="Message de confirmation de paiement", help_text="Collez ici le message reçu après paiement via MTN ou Orange Money")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de création")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Date de modification")
     
@@ -162,10 +170,8 @@ class Order(models.Model):
     def __str__(self):
         return f"Commande #{self.id} - {self.customer.username}"
 
-    # ✅ méthode utile pour le total avec livraison
     def get_total_with_shipping(self):
         return self.total_amount + self.shipping_cost
-
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name="Commande")
@@ -192,8 +198,8 @@ class ContactMessage(models.Model):
     subject = models.CharField(max_length=200)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    approved = models.BooleanField(default=False)  # ✅ approuvé par admin
-    is_testimonial = models.BooleanField(default=False)  # ✅ champ pour avis
+    approved = models.BooleanField(default=False)
+    is_testimonial = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
