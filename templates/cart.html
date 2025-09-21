@@ -80,15 +80,17 @@ h1.display-5 {
     color: #fff;
 }
 
-/* Images du panier */
-.img-fluid {
+/* Carousel images */
+.carousel-item img {
     max-height: 150px;
+    object-fit: cover;
     border-radius: 0.5rem;
 }
 
 /* Responsive */
 @media (max-width: 768px){
     .card-body { padding: 1rem; }
+    .carousel-item img { max-height: 120px; }
 }
 </style>
 {% endblock %}
@@ -105,17 +107,41 @@ h1.display-5 {
                 <div class="card-body">
                     {% for item in cart %}
                     <div class="row align-items-center mb-4 pb-3 border-bottom">
-                        <!-- Image -->
+                        <!-- Carousel d'images -->
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
-                            <img src="{{ item.shoe.image.url }}" alt="{{ item.shoe.name }}" 
-                                 class="img-fluid rounded shadow-sm">
+                            <div id="carousel-{{ item.shoe.id }}" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <!-- Image principale -->
+                                    <div class="carousel-item active">
+                                        <img src="{{ item.shoe.image.url }}" alt="{{ item.shoe.name }}" class="img-fluid shadow-sm rounded">
+                                    </div>
+                                    <!-- Autres images -->
+                                    {% for image in item.shoe.shoe_images.all %}
+                                    <div class="carousel-item">
+                                        <img src="{{ image.image.url }}" alt="{{ item.shoe.name }}" class="img-fluid shadow-sm rounded">
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if item.shoe.shoe_images.count > 0 %}
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ item.shoe.id }}" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Précédent</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ item.shoe.id }}" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Suivant</span>
+                                </button>
+                                {% endif %}
+                            </div>
                         </div>
+
                         <!-- Détails -->
                         <div class="col-12 col-md-6 text-center text-md-start mb-2 mb-md-0">
                             <h5 class="fw-semibold">{{ item.shoe.name }}</h5>
                             <p class="text-muted small">Pointure: {{ item.size }} | Couleur: {{ item.color }}</p>
                             <p class="text-primary fw-bold fs-5">{{ item.price }} FCFA</p>
                         </div>
+
                         <!-- Actions -->
                         <div class="col-12 col-md-3 d-flex flex-column align-items-center align-items-md-end gap-2">
                             <div class="btn-group mb-2" role="group">

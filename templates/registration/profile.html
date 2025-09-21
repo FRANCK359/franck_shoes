@@ -2,26 +2,101 @@
 
 {% block title %}Mon profil - Franck'K Shoes CM{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ================= Profil Styles ================= */
+.card {
+    border: none;
+    border-radius: 1rem;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #4fc3ff, #ff4b4b) !important;
+    color: #fff;
+}
+
+.card-header.bg-light {
+    background: rgba(255,255,255,0.5);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff4b4b, #1a1a1a);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255,75,75,0.6);
+}
+
+.btn-outline-primary {
+    color: #4fc3ff;
+    border: 2px solid #4fc3ff;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: #4fc3ff;
+    color: #1a1a1a;
+}
+
+.badge {
+    font-weight: 600;
+}
+
+/* Carousel profil */
+.carousel-item img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+    .card-body { padding: 1rem; }
+    .carousel-item img { width: 120px; height: 120px; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row g-4">
         <!-- Sidebar Profil -->
         <div class="col-lg-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white text-center">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-center">
                     <h5 class="mb-0"><i class="fas fa-user-circle"></i> Mon compte</h5>
                 </div>
                 <div class="card-body text-center">
-                    {% if user.userprofile.profile_picture %}
-                        <img src="{{ user.userprofile.profile_picture.url }}" alt="Photo de profil" 
-                             class="img-fluid rounded-circle shadow mb-3" 
-                             style="width: 150px; height: 150px; object-fit: cover;">
-                    {% else %}
-                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto shadow mb-3" 
-                             style="width: 150px; height: 150px;">
-                            <i class="fas fa-user fa-3x text-muted"></i>
+                    <!-- Carousel photo profil -->
+                    <div id="profileCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% if user.userprofile.profile_picture %}
+                            <div class="carousel-item active">
+                                <img src="{{ user.userprofile.profile_picture.url }}" alt="Photo de profil" class="img-fluid shadow">
+                            </div>
+                            {% endif %}
+                            {% comment %} Si tu ajoutes plusieurs images de profil, tu peux les parcourir ici {% endcomment %}
                         </div>
-                    {% endif %}
+                        {% if user.userprofile.profile_picture %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#profileCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#profileCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                        {% endif %}
+                    </div>
+
                     <h4 class="fw-bold">{{ user.username }}</h4>
                     <p class="text-muted mb-1"><i class="fas fa-envelope"></i> {{ user.email }}</p>
                     <p class="mb-1"><i class="fas fa-phone"></i> {{ user.userprofile.phone_number|default:"Non renseigné" }}</p>
@@ -30,7 +105,7 @@
             </div>
 
             <!-- Statistiques -->
-            <div class="card shadow-sm border-0 mt-4">
+            <div class="card shadow-lg mt-4">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-chart-line"></i> Statistiques</h5>
                 </div>
@@ -52,7 +127,7 @@
         <!-- Section principale -->
         <div class="col-lg-8">
             <!-- Formulaire de modification -->
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-lg">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-edit"></i> Modifier mon profil</h5>
                 </div>
@@ -91,7 +166,7 @@
             </div>
 
             <!-- Liste des commandes -->
-            <div class="card shadow-sm border-0 mt-4">
+            <div class="card shadow-lg mt-4">
                 <div class="card-header bg-light">
                     <h5 class="mb-0"><i class="fas fa-shopping-bag"></i> Mes commandes</h5>
                 </div>
@@ -149,4 +224,15 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var profileCarousel = document.querySelector('#profileCarousel');
+    if(profileCarousel){
+        var carousel = new bootstrap.Carousel(profileCarousel, {interval: 3000});
+    }
+});
+</script>
 {% endblock %}

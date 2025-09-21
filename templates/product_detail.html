@@ -14,9 +14,26 @@
     </nav>
     
     <div class="row">
+        <!-- Carousel d'images -->
         <div class="col-md-6">
-            <img src="{{ shoe.image.url }}" alt="{{ shoe.name }}" class="img-fluid rounded shadow">
+            <div id="shoeCarousel" class="carousel slide shadow rounded" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for item in images %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ item.image.url }}" class="d-block w-100 rounded" alt="{{ shoe.name }}" style="max-height:450px; object-fit:cover;">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#shoeCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#shoeCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
         </div>
+
+        <!-- Infos produit -->
         <div class="col-md-6">
             <h1 class="display-5">{{ shoe.name }}</h1>
             <p class="text-muted">{{ shoe.category.name }}</p>
@@ -33,6 +50,7 @@
                 <p>{{ shoe.description }}</p>
             </div>
             
+            <!-- Formulaire d'ajout au panier -->
             <form id="add-to-cart-form">
                 {% csrf_token %}
                 
@@ -149,12 +167,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Mettre à jour le compteur du panier
                 document.querySelectorAll('.cart-count').forEach(span => {
                     span.textContent = data.cart_count;
                 });
-                
-                // Afficher une notification
                 showAlert('Produit ajouté au panier!', 'success');
             }
         });
@@ -187,7 +202,6 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.body.appendChild(alertDiv);
         
-        // Supprimer l'alerte après 3 secondes
         setTimeout(() => {
             alertDiv.remove();
         }, 3000);

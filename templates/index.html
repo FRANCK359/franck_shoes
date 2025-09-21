@@ -1,181 +1,697 @@
 {% extends 'base.html' %}
-{% load static %} 
+{% load static %}
 
 {% block title %}Accueil - Franck'K Shoes CM{% endblock %}
 
-{% block extra_css %}
-<!-- CSS externalisé pour plus de clarté -->
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock %}
-
 {% block content %}
-
-<!-- Hero Section avec diaporama -->
-<section class="hero-section py-5" aria-label="Diaporama de présentation">
-    <div class="slideshow-container">
-        <div class="slide active" style="background-image: url('/static/images/slide1.jpeg');" aria-hidden="false"></div>
-        <div class="slide" style="background-image: url('/static/images/slide2.jpeg');" aria-hidden="true"></div>
-        <div class="slide" style="background-image: url('/static/images/slide3.jpg');" aria-hidden="true"></div>
-        <div class="slide" style="background-image: url('/static/images/slide4.jpg');" aria-hidden="true"></div>
-    </div>
-    
-    <div class="container h-100">
-        <div class="row align-items-center h-100">
-            <div class="col-md-7">
-                <div class="hero-content">
-                    <h1 class="display-4 fw-bold">Des chaussures de qualité à prix imbattables</h1>
-                    <p class="lead">Découvrez notre collection de chaussures importées directement de Chine. Livraison dans tout le Cameroun.</p>
-                    <div class="hero-buttons">
-                        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Découvrir la boutique</a>
-                        <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-lg">Nous contacter</a>
+<!-- Hero Carousel Section -->
+<section class="hero-section">
+    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="carousel-image" style="background-image: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80');"></div>
+                <div class="carousel-overlay"></div>
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1 class="display-3 fw-bold">Nouvelle Collection Automne/Hiver</h1>
+                        <p class="lead">Découvrez nos dernières chaussures tendance pour la saison</p>
+                        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Découvrir</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="carousel-image" style="background-image: url('https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80');"></div>
+                <div class="carousel-overlay"></div>
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1 class="display-3 fw-bold">Des Chaussures de Qualité Supérieure</h1>
+                        <p class="lead">Confort, style et durabilité pour toutes les occasions</p>
+                        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Explorer</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="carousel-image" style="background-image: url('https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80');"></div>
+                <div class="carousel-overlay"></div>
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1 class="display-3 fw-bold">Livraison Rapide au Cameroun</h1>
+                        <p class="lead">Recevez vos commandes en 24-48h partout au Cameroun</p>
+                        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">Acheter maintenant</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Indicateurs de slides -->
-    <div class="slide-indicators" aria-label="Contrôle du diaporama">
-        <button class="slide-indicator active" aria-label="Afficher la slide 1" aria-current="true"></button>
-        <button class="slide-indicator" aria-label="Afficher la slide 2"></button>
-        <button class="slide-indicator" aria-label="Afficher la slide 3"></button>
-        <button class="slide-indicator" aria-label="Afficher la slide 4"></button>
-    </div>
-</section>
-
-<!-- Livraison & Expédition -->
-<section class="delivery-info py-3 text-white text-center" aria-label="Informations de livraison">
-    <div class="container">
-        <p class="fw-bold mb-0">
-            <i class="fas fa-truck me-2" aria-hidden="true"></i>
-            Livraison disponible dans la ville de <strong>Douala</strong> et expéditions vers toutes les autres villes. 
-            Les frais de livraison dépendent du quartier et les frais d'expédition dépendent de la quantité achetée et de la ville. 
-            <strong>Livraison gratuite pour tout achat ≥ 50 000 FCFA</strong>!
-        </p>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Précédent</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Suivant</span>
+        </button>
     </div>
 </section>
 
-<!-- Featured Products -->
-<section class="featured-products py-5" aria-label="Produits populaires">
+<!-- Featured Products Section -->
+<section id="featured" class="py-5">
     <div class="container">
-        <h2 class="text-center mb-5">Produits populaires</h2>
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h2 class="section-title">Produits en vedette</h2>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-primary">Voir tous</a>
+        </div>
+        
         <div class="row">
             {% for shoe in featured_shoes %}
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="col-md-3 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="{{ shoe.image.url }}" class="card-img-top" alt="{{ shoe.name }}" loading="lazy" width="300" height="250">
-                    <div class="card-body d-flex flex-column">
-                        <h3 class="card-title h5">{{ shoe.name }}</h3>
+                    {% if shoe.featured %}
+                    <span class="badge-featured">En vedette</span>
+                    {% endif %}
+                    
+                    <!-- Carousel pour chaque chaussure -->
+                    <div id="carousel-{{ shoe.id }}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+                        {% if shoe.shoe_images.exists %}
+                            {% if shoe.shoe_images.count > 1 %}
+                            <div class="carousel-indicators">
+                                {% for img in shoe.shoe_images.all %}
+                                <button type="button" data-bs-target="#carousel-{{ shoe.id }}" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <div class="carousel-inner">
+                                {% for img in shoe.shoe_images.all %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ img.image.url }}" class="d-block w-100" alt="{{ shoe.name }}" style="height:250px; object-fit:cover;">
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if shoe.shoe_images.count > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ shoe.id }}" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Précédent</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ shoe.id }}" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Suivant</span>
+                            </button>
+                            {% endif %}
+                        {% else %}
+                        <!-- Si pas d'images supplémentaires -->
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="{{ shoe.image.url }}" class="d-block w-100" alt="{{ shoe.name }}" style="height:250px; object-fit:cover;">
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ shoe.name }}</h5>
+                        <p class="card-text text-muted">{{ shoe.category.name }}</p>
                         <p class="card-text text-primary fw-bold">{{ shoe.price }} FCFA</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center">
                             <a href="{% url 'product_detail' shoe.id %}" class="btn btn-sm btn-outline-primary">Voir détails</a>
-                            <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}" aria-label="Ajouter {{ shoe.name }} au panier">
-                                <i class="fas fa-cart-plus" aria-hidden="true"></i>
+                            <button class="btn btn-sm btn-primary add-to-cart" data-shoe-id="{{ shoe.id }}">
+                                <i class="fas fa-cart-plus"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">Aucun produit vedette pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Nos Catégories</h2>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-md-3 mb-4">
+                <div class="category-card text-center p-4">
+                    <div class="category-icon mb-3">
+                        <i class="fas fa-shoe-prints fa-3x"></i>
+                    </div>
+                    <h3>{{ category.name }}</h3>
+                    <p class="text-muted">{{ category.description|truncatewords:15 }}</p>
+                    <a href="{% url 'product_list' %}?category={{ category.id }}" class="btn btn-outline-primary">Explorer</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Pourquoi nous choisir ?</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="text-center feature-box">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-truck fa-3x"></i>
+                    </div>
+                    <h4>Livraison Rapide</h4>
+                    <p class="text-muted">Livraison express partout au Cameroun en 24-48h</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center feature-box">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x"></i>
+                    </div>
+                    <h4>Qualité Garantie</h4>
+                    <p class="text-muted">Des matériaux de haute qualité pour une durabilité exceptionnelle</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center feature-box">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-headset fa-3x"></i>
+                    </div>
+                    <h4>Support 7j/7</h4>
+                    <p class="text-muted">Notre équipe est disponible pour vous aider à tout moment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Ce que disent nos clients</h2>
+        <div class="row">
+            {% for message in messages_clients %}
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card p-4">
+                    <div class="testimonial-text mb-3">
+                        {{ message.message|truncatewords:30 }}
+                    </div>
+                    <div class="testimonial-author">
+                        - {{ message.name }}
+                        {% if message.city %}
+                        <span class="text-muted">({{ message.city }})</span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
         <div class="text-center mt-4">
-            <a href="{% url 'product_list' %}" class="btn btn-primary">Voir tous les produits</a>
+            <a href="{% url 'contact' %}" class="btn btn-primary">Laisser un témoignage</a>
         </div>
     </div>
 </section>
 
-<!-- Categories -->
-<section class="categories py-5 bg-light" aria-label="Catégories de produits">
-    <div class="container">
-        <h2 class="text-center mb-5">Nos catégories</h2>
-        <div class="row">
-            {% for category in categories %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card category-card h-100 shadow-sm">
-                    <div class="card-body text-center">
-                        <h3 class="card-title h5">{{ category.name }}</h3>
-                        <p class="card-text">{{ category.description }}</p>
-                        <a href="{% url 'product_list' %}?category={{ category.id }}" class="btn btn-primary">Voir les produits</a>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">Aucune catégorie disponible pour le moment.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
-<!-- Features -->
-<section class="features py-5" aria-label="Nos services">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4 mb-4">
-                <div class="feature-item">
-                    <i class="fas fa-truck fa-3x text-primary mb-3" aria-hidden="true"></i>
-                    <h3>Livraison rapide</h3>
-                    <p>Livraison dans toutes les villes du Cameroun</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="feature-item">
-                    <i class="fas fa-money-bill-wave fa-3x text-primary mb-3" aria-hidden="true"></i>
-                    <h3>Paiement sécurisé</h3>
-                    <p>MTN Money, Orange Money et paiement à la livraison</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="feature-item">
-                    <i class="fas fa-headset fa-3x text-primary mb-3" aria-hidden="true"></i>
-                    <h3>Support client</h3>
-                    <p>Assistance 7j/7 par téléphone et WhatsApp</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonials -->
-<section class="testimonials py-5 bg-light" aria-label="Témoignages clients">
-    <div class="container">
-        <h2 class="text-center mb-5">Ce que disent nos clients</h2>
-        <div class="row">
-            {% for msg in messages_clients %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="mb-3" aria-label="5 étoiles sur 5">
-                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
-                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
-                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
-                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
-                            <i class="fas fa-star text-warning" aria-hidden="true"></i>
-                        </div>
-                        <blockquote>
-                            <p class="card-text fst-italic">"{{ msg.message }}"</p>
-                            <footer class="text-muted mt-3">- {{ msg.name }} de {{ msg.city }}</footer>
-                        </blockquote>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center">
-                <p class="text-muted">Aucun témoignage client disponible pour l'instant.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
 
 {% endblock %}
 
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #0a2540;
+        --secondary-color: #ff6b35;
+        --accent-color: #00a8cc;
+        --light-color: #f8f9fa;
+        --dark-color: #1a1a2e;
+        --text-color: #333;
+        --border-color: #e0e0e0;
+    }
+    
+    .hero-section {
+        position: relative;
+        height: 100vh;
+        min-height: 600px;
+        overflow: hidden;
+    }
+    
+    .carousel-item {
+        height: 100vh;
+        min-height: 600px;
+    }
+    
+    .carousel-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .carousel-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(10, 37, 64, 0.8), rgba(10, 37, 64, 0.6));
+    }
+    
+    .carousel-caption {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: left;
+        max-width: 600px;
+    }
+    
+    .carousel-caption h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .carousel-caption .lead {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    .section-title {
+        position: relative;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        font-weight: 600;
+        color: var(--dark-color);
+    }
+    
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--secondary-color);
+    }
+    
+    .section-title.text-center:after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    /* CORRECTION : Hauteur réduite pour les cartes de produits */
+    .card {
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        height: auto; /* Changé de 100% à auto */
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: var(--secondary-color);
+    }
+    
+    /* Conteneur d'image avec hauteur fixe */
+    .card .carousel {
+        height: 220px; /* Hauteur réduite pour les images */
+        overflow: hidden;
+    }
+    
+    .card .carousel-inner,
+    .card .carousel-item {
+        height: 100%;
+    }
+    
+    .card .carousel-item img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+    }
+    
+    /* Contenu de la carte avec espacement réduit */
+    .card-body {
+        padding: 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .card-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        line-height: 1.3;
+        height: 2.6em; /* Limite à 2 lignes */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .card-text.text-muted {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-text.fw-bold {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .badge-featured {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 10;
+        letter-spacing: 0.5px;
+    }
+    
+    .category-card {
+        background-color: white;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        height: 100%;
+        padding: 20px 15px; /* Padding réduit */
+        text-align: center;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: var(--secondary-color);
+    }
+    
+    .category-icon {
+        color: var(--primary-color);
+        font-size: 2rem; /* Taille réduite */
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .category-card:hover .category-icon {
+        color: var(--secondary-color);
+        transform: scale(1.1);
+    }
+    
+    .category-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .category-card p {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        height: 4.2em; /* Limite à 3 lignes */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+    
+    .testimonial-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+    
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: var(--secondary-color);
+    }
+    
+    .testimonial-text {
+        color: var(--text-color);
+        line-height: 1.5;
+        position: relative;
+        padding: 0 0 0 20px;
+        font-size: 0.95rem;
+        height: 6em; /* Limite la hauteur */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+    }
+    
+    .testimonial-text:before {
+        content: """;
+        position: absolute;
+        left: 0;
+        top: -10px;
+        font-size: 2.5rem;
+        color: var(--secondary-color);
+        font-family: Georgia, serif;
+        opacity: 0.3;
+    }
+    
+    .testimonial-author {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+    }
+    
+    .testimonial-author:before {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 2px;
+        background-color: var(--secondary-color);
+        margin-right: 8px;
+    }
+    
+    .feature-icon {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-box:hover .feature-icon {
+        color: var(--secondary-color);
+        transform: translateY(-5px);
+    }
+    
+    .feature-box h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-box p {
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        border-radius: 4px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        border-radius: 4px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-outline-light:hover {
+        color: var(--primary-color);
+    }
+    
+    .carousel-control-prev, .carousel-control-next {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .carousel:hover .carousel-control-prev,
+    .carousel:hover .carousel-control-next {
+        opacity: 1;
+    }
+    
+    .carousel-indicators button {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin: 0 4px;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .carousel-indicators .active {
+        background-color: var(--secondary-color);
+    }
+    
+    /* Animation pour l'apparition des éléments */
+    .card, .category-card, .testimonial-card, .feature-box {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    
+
+    /* Ajustements responsives */
+    @media (max-width: 768px) {
+        .carousel-caption h1 {
+            font-size: 2rem;
+        }
+        
+        .carousel-caption .lead {
+            font-size: 1.1rem;
+        }
+        
+        .card .carousel {
+            height: 180px;
+        }
+        
+        .card-title {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block extra_js %}
-<!-- JavaScript externalisé pour plus de clarté -->
-<script src="{% static 'js/home.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des éléments au défilement
+    const animateOnScroll = function() {
+        const elements = document.querySelectorAll('.card, .category-card, .testimonial-card, .feature-box');
+        
+        elements.forEach(element => {
+            const position = element.getBoundingClientRect().top;
+            const screenPosition = window.innerHeight / 1.3;
+            
+            if(position < screenPosition) {
+                element.style.opacity = 1;
+                element.style.transform = 'translateY(0)';
+            }
+        });
+    };
+    
+    // Initialisation
+    window.addEventListener('scroll', animateOnScroll);
+    animateOnScroll(); // Déclenchement initial
+    
+    // Gestion de l'ajout au panier
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const shoeId = this.getAttribute('data-shoe-id');
+            addToCart(shoeId, 38, 'Noir', 1);
+        });
+    });
+    
+    function addToCart(shoeId, size, color, quantity) {
+        fetch(`/panier/ajouter/${shoeId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                size: size,
+                color: color,
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mettre à jour le compteur du panier
+                document.querySelectorAll('.cart-count').forEach(span => {
+                    span.textContent = data.cart_count;
+                });
+                
+                // Afficher une notification
+                showAlert('Produit ajouté au panier!', 'success');
+            }
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        // Supprimer l'alerte après 3 secondes
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+});
+</script>
 {% endblock %}

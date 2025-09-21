@@ -60,11 +60,15 @@ def product_list(request):
 
 def product_detail(request, shoe_id):
     shoe = get_object_or_404(Shoe, id=shoe_id)
+    images = shoe.shoe_images.all()  # ✅ images secondaires
     related_shoes = Shoe.objects.filter(category=shoe.category).exclude(id=shoe.id)[:4]
+    
     return render(request, 'product_detail.html', {
         'shoe': shoe,
+        'images': images,
         'related_shoes': related_shoes
     })
+
 
 def cart_detail(request):
     cart = Cart(request)
